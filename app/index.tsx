@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, ImageBackground, StatusBar } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Link } from 'expo-router';
 
 export default function WelcomeScreen() {
   return (
@@ -32,7 +33,7 @@ export default function WelcomeScreen() {
           contentStyle={styles.buttonContent}
           style={styles.button}
         >
-          Get Started
+          <Link href="/home">Get Started</Link>
         </Button>
       </View>
     </ImageBackground>
