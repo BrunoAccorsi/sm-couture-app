@@ -3,7 +3,7 @@ PODS:
   - BVLinearGradient (2.8.3):
     - React-Core
   - DoubleConversion (1.1.6)
-  - EXConstants (17.0.4):
+  - EXConstants (17.0.5):
     - ExpoModulesCore
   - Expo (52.0.25):
     - ExpoModulesCore
@@ -2101,7 +2101,7 @@ SPEC CHECKSUMS:
   boost: 1dca942403ed9342f98334bf4c3621f011aa7946
   BVLinearGradient: cb006ba232a1f3e4f341bb62c42d1098c284da70
   DoubleConversion: f16ae600a246532c4020132d54af21d0ddb2a385
-  EXConstants: 6b8c5653492349b3c3fe6b905c556bc45b360405
+  EXConstants: e25c3f3ef5d1cf7a6ef911ebf7a3ab94d8d06d82
   Expo: 63db23579a7a878567185fa0524b8294b4f93b28
   ExpoAsset: d2d2cbc6a4efadf51a3da27d85d589935abd0b98
   ExpoBlur: cb75554318a537db7a65ad589a0a5f32173ca39b

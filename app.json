@@ -37,6 +37,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "CALENDLY_API_USER": "https://api.calendly.com/users/05520f39-eca0-4cca-aad6-da2d19775f7f",
+      "CALENDLY_API_URL": "https://api.calendly.com",
+      "CALENDLY_API_KEY": "eyJraWQiOiIxY2UxZTEzNjE3ZGNmNzY2YjNjZWJjY2Y4ZGM1YmFmYThhNjVlNjg0MDIzZjdjMzJiZTgzNDliMjM4MDEzNWI0IiwidHlwIjoiUEFUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNzM4NDMwOTg4LCJqdGkiOiIwMWI0OGQ5MC1mN2YzLTQ0ZTItYTM2Yy0xY2ExN2FjY2ZjMDUiLCJ1c2VyX3V1aWQiOiIwNTUyMGYzOS1lY2EwLTRjY2EtYWFkNi1kYTJkMTk3NzVmN2YifQ.P9vPhRifEqegrxw6-PZzYxp0-hUwuPQNOCuSAt_gZ3fXmnf_DPczE_Vn7focI4aX-wZnOFo_GgxksSdwjfw27g"
     }
   }
 }
