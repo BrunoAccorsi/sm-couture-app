@@ -13,30 +13,14 @@ if (!publishableKey) {
   throw new Error('Missing EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY');
 }
 
-function AuthGate({ children }: { children: React.ReactNode }) {
-  const { isSignedIn, isLoaded } = useAuth();
-
-  if (!isLoaded) {
-    return null;
-  }
-
-  if (!isSignedIn) {
-    return <Redirect href="/(auth)/sign-in" />;
-  }
-
-  return <>{children}</>;
-}
-
 export default function RootLayout() {
   return (
     <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
       <ClerkLoaded>
         <PaperProvider theme={customTheme}>
           <QueryClientProvider client={queryClient}>
-            <AuthGate>
-              {/* Se o usuário estiver logado, <Slot /> renderiza o restante do app */}
-              <Slot />
-            </AuthGate>
+            {/* Se o usuário estiver logado, <Slot /> renderiza o restante do app */}
+            <Slot />
           </QueryClientProvider>
         </PaperProvider>
       </ClerkLoaded>

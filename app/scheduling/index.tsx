@@ -2,7 +2,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Appbar, MD3Theme, useTheme } from 'react-native-paper';
-import CalendlyWidget from './components/CalendlyWebView';
+import CalendlyWidget from '@app/components/CalendlyWebView';
 
 export default function ProductScreen() {
   const theme = useTheme();
