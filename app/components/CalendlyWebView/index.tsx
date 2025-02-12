@@ -23,7 +23,7 @@ const CalendlyWidget = () => {
           uri: 'https://calendly.com/b-bergoli/kids-corner?background_color=1a1a1a&text_color=ffffff&primary_color=2a4e81&email=b.bergoli@gmail.com',
         }}
         opaque={false}
-        style={{ opacity: isLoading ? 0 : 1 }}
+        style={{ opacity: isLoading ? 0 : 1, backgroundColor: 'transparent' }}
         javaScriptEnabled={true}
         domStorageEnabled={true}
         onLoadEnd={() => setTimeout(() => setIsLoading(false), 2 * 1000)} // Adds 2s loading time for calendly to load branding
@@ -36,11 +36,11 @@ const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#1a1a1a', // Prevents white flash
+      backgroundColor: theme.colors.background, // Prevents white flash
     },
     loadingContainer: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: '#1a1a1a', // Keeps loading screen black
+      backgroundColor: theme.colors.background, // Keeps loading screen black
       justifyContent: 'center',
       alignItems: 'center',
     },
