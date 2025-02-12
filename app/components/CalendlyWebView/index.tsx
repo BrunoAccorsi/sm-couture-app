@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  ScrollView,
-  ActivityIndicator,
-  Text,
-  StyleSheet,
-} from 'react-native';
+import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
 import { MD3Theme, useTheme } from 'react-native-paper';
 import { WebView } from 'react-native-webview';
 
@@ -16,22 +10,23 @@ const CalendlyWidget = () => {
 
   return (
     <View style={styles.container}>
+      {/* Show loading screen with dark background */}
       {isLoading && (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="white" />
           <Text style={styles.loadingText}>Loading Calendly...</Text>
         </View>
       )}
+
       <WebView
         source={{
-          uri: 'https://calendly.com/b-bergoli/kids-corner?background_color=1a1a1a&text_color=ffffff&primary_color=2a4e81&&email=b.bergoli@gmail.com',
+          uri: 'https://calendly.com/b-bergoli/kids-corner?background_color=1a1a1a&text_color=ffffff&primary_color=2a4e81&email=b.bergoli@gmail.com',
         }}
         opaque={false}
-        style={styles.webview}
+        style={{ opacity: isLoading ? 0 : 1 }}
         javaScriptEnabled={true}
         domStorageEnabled={true}
-        startInLoadingState={true}
-        onLoadEnd={() => setIsLoading(false)}
+        onLoadEnd={() => setTimeout(() => setIsLoading(false), 2 * 1000)} // Adds 2s loading time for calendly to load branding
       />
     </View>
   );
@@ -41,25 +36,17 @@ const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: '#1a1a1a', // Prevents white flash
     },
     loadingContainer: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: '#1a1a1a', // Keeps loading screen black
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: theme.colors.background,
     },
     loadingText: {
       marginTop: 10,
       color: 'white',
-    },
-    webview: {
-      flex: 1,
-      backgroundColor: 'transparent',
     },
   });
 
