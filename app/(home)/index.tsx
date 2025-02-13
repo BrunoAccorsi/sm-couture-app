@@ -11,10 +11,10 @@ export default function Page() {
         <Text>Hello {user?.emailAddresses[0].emailAddress}</Text>
       </SignedIn>
       <SignedOut>
-        <Link href="/(auth)/sign-in">
+        <Link href="../sign-in">
           <Text>Sign in</Text>
         </Link>
-        <Link href="/(auth)/sign-up">
+        <Link href="../sign-up">
           <Text>Sign up</Text>
         </Link>
       </SignedOut>
