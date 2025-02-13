@@ -4,7 +4,6 @@ import { SButton } from '../components/Button'
 import * as WebBrowser from 'expo-web-browser'
 import { useEffect, useState } from "react"
 import { useSSO } from "@clerk/clerk-expo"
-import * as Liking from "expo-linking"
 
 WebBrowser.maybeCompleteAuthSession()
 

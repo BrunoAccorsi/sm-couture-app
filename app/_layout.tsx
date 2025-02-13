@@ -11,6 +11,7 @@ function InitialLayout(){
 
   useEffect(() => {
     if(!isLoaded) return
+
     if(isSignedIn){
       router.replace("/(auth)")
     } else {
@@ -30,7 +31,8 @@ export default function Layout() {
   return (
     <ClerkProvider 
     publishableKey={PUBLIC_CLERK_PUBLISHABLE_KEY} 
-    tokenCache={tokenCache}>
+    tokenCache={tokenCache}
+    >
       
       <Slot />
     </ClerkProvider>
