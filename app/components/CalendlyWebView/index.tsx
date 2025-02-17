@@ -1,3 +1,4 @@
+import { useAuth, useUser } from '@clerk/clerk-expo';
 import React, { useState } from 'react';
 import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
 import { MD3Theme, useTheme } from 'react-native-paper';
@@ -7,6 +8,11 @@ const CalendlyWidget = () => {
   const [isLoading, setIsLoading] = useState(true);
   const theme = useTheme();
   const styles = createStyles(theme);
+  const { user } = useUser();
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
@@ -20,7 +26,7 @@ const CalendlyWidget = () => {
 
       <WebView
         source={{
-          uri: 'https://calendly.com/b-bergoli/kids-corner?background_color=1a1a1a&text_color=ffffff&primary_color=2a4e81&email=b.bergoli@gmail.com',
+          uri: `https://calendly.com/b-bergoli/kids-corner?email=${user.primaryEmailAddress?.emailAddress}&name=${user.fullName}`,
         }}
         opaque={false}
         style={{ opacity: isLoading ? 0 : 1, backgroundColor: 'transparent' }}

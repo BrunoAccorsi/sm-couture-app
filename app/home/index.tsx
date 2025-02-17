@@ -1,15 +1,36 @@
+import CalendlyWidget from '@app/components/CalendlyWebView';
+import { useClerk, useUser } from '@clerk/clerk-expo';
 import { FontAwesome6 } from '@expo/vector-icons';
+import * as Linking from 'expo-linking';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Appbar, Button, MD3Theme, useTheme } from 'react-native-paper';
-import CalendlyWidget from '@app/components/CalendlyWebView';
-import { useClerk } from '@clerk/clerk-expo';
-import * as Linking from 'expo-linking';
+import { Appbar, Button, MD3Theme, Text, useTheme } from 'react-native-paper';
+import z from 'zod';
+import { useClerkQuery } from '../hooks/useClerkQuery';
+
+const scheduleSchema = z.array(
+  z.object({
+    id: z.number(),
+    email: z.string(),
+    event: z.string(),
+    cancel_url: z.string(),
+    reschedule_url: z.string(),
+    createdAt: z.string(),
+  })
+);
+
+export type Schedule = z.infer<typeof scheduleSchema>;
 
 export default function ProductScreen() {
   const theme = useTheme();
   const styles = createStyles(theme);
   const { signOut } = useClerk();
+
+  const { user } = useUser();
+
+  if (!user) {
+    return null;
+  }
 
   const handleSignOut = async () => {
     try {
@@ -22,6 +43,21 @@ export default function ProductScreen() {
       console.error(JSON.stringify(err, null, 2));
     }
   };
+
+  const { data, isLoading } = useClerkQuery({
+    queryKey: ['test'],
+    url: 'https://sm-couture-app-api-a19z.vercel.app/api/schedules',
+    config: {
+      params: { email: user.primaryEmailAddress?.emailAddress },
+    },
+  });
+  console.log(data?.data);
+
+  const parsedData = scheduleSchema.safeParse(data?.data);
+
+  //scheduled events
+  const schedules = parsedData.success ? parsedData.data : [];
+  console.log(schedules);
 
   return (
     <View style={styles.container}>
@@ -36,6 +72,16 @@ export default function ProductScreen() {
         <FontAwesome6 name="circle-user" size={40} style={styles.avatar} />
       </Appbar.Header>
       <CalendlyWidget />
+      {!isLoading && (
+        <>
+          {schedules.map((schedule) => (
+            <View key={schedule.id}>
+              <Text>{schedule.event}</Text>
+              <Text>{schedule.reschedule_url}</Text>
+            </View>
+          ))}
+        </>
+      )}
     </View>
   );
 }
