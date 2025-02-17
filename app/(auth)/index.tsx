@@ -25,7 +25,7 @@ export default function Page() {
   // Use the `useSSO()` hook to access the `startSSOFlow()` method
   const { startSSOFlow } = useSSO();
 
-  const onPress = useCallback(async () => {
+  const onGoogleSignIn = useCallback(async () => {
     try {
       // Start the authentication process by calling `startSSOFlow()`
       const { createdSessionId, setActive, signIn, signUp } =
@@ -49,12 +49,41 @@ export default function Page() {
     }
   }, [startSSOFlow]);
 
+  const onAppleSignIn = useCallback(async () => {
+    try {
+      // Start the authentication process by calling `startSSOFlow()`
+      const { createdSessionId, setActive, signIn, signUp } =
+        await startSSOFlow({
+          strategy: 'oauth_apple',
+        });
+
+      // If sign in was successful, set the active session
+      if (createdSessionId) {
+        setActive!({ session: createdSessionId });
+      } else {
+        // If there is no `createdSessionId`,
+        // there are missing requirements, such as MFA
+        // Use the `signIn` or `signUp` returned from `startSSOFlow`
+        // to handle next steps
+      }
+    } catch (err) {
+      // See https://clerk.com/docs/custom-flows/error-handling
+      // for more info on error handling
+      console.error(JSON.stringify(err, null, 2));
+    }
+  }, [startSSOFlow]);
+
   return (
     <View style={styles.container}>
       <SButton
         icon="logo-google"
         title="Sign in with Google"
-        onPress={onPress}
+        onPress={onGoogleSignIn}
+      />
+      <SButton
+        icon="logo-apple"
+        title="Sign in with Apple"
+        onPress={onAppleSignIn}
       />
     </View>
   );
