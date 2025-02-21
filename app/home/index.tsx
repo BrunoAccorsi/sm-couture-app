@@ -2,9 +2,18 @@ import CalendlyWidget from '@app/components/CalendlyWebView';
 import { useClerk, useUser } from '@clerk/clerk-expo';
 import { FontAwesome6 } from '@expo/vector-icons';
 import * as Linking from 'expo-linking';
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Appbar, Button, MD3Theme, Text, useTheme } from 'react-native-paper';
+import React, { useState } from 'react';
+import { StyleSheet, View, Image } from 'react-native';
+import {
+  Appbar,
+  Avatar,
+  Button,
+  Divider,
+  MD3Theme,
+  Menu,
+  Text,
+  useTheme,
+} from 'react-native-paper';
 import z from 'zod';
 import { useClerkQuery } from '../hooks/useClerkQuery';
 
@@ -25,12 +34,9 @@ export default function ProductScreen() {
   const theme = useTheme();
   const styles = createStyles(theme);
   const { signOut } = useClerk();
+  const [menuVisible, setMenuVisible] = useState(false);
 
   const { user } = useUser();
-
-  if (!user) {
-    return null;
-  }
 
   const handleSignOut = async () => {
     try {
@@ -48,7 +54,7 @@ export default function ProductScreen() {
     queryKey: ['test'],
     url: 'https://sm-couture-app-api-a19z.vercel.app/api/schedules',
     config: {
-      params: { email: user.primaryEmailAddress?.emailAddress },
+      params: { email: user?.primaryEmailAddress?.emailAddress },
     },
   });
   console.log(data?.data);
@@ -58,6 +64,11 @@ export default function ProductScreen() {
   //scheduled events
   const schedules = parsedData.success ? parsedData.data : [];
   console.log(schedules);
+  console.log(user?.imageUrl);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
@@ -68,20 +79,29 @@ export default function ProductScreen() {
           onPress={() => console.log('Menu clicked')}
         />
         <Appbar.Content title="Schedule" color={theme.colors.onSurface} />
-        <Button onPress={handleSignOut}>Sign Out</Button>
-        <FontAwesome6 name="circle-user" size={40} style={styles.avatar} />
+        {/* Clickable Avatar with Menu */}
+        <Menu
+          visible={menuVisible}
+          onDismiss={() => setMenuVisible(false)}
+          anchor={
+            <Avatar.Image
+              size={40}
+              source={{ uri: user.imageUrl }}
+              style={styles.avatar}
+              onTouchEnd={() => setMenuVisible(true)}
+            />
+          }
+          anchorPosition="bottom"
+        >
+          <Menu.Item onPress={handleSignOut} title="Sign Out" />
+          <Divider />
+          <Menu.Item
+            onPress={() => console.log('Profile clicked')}
+            title="View Profile"
+          />
+        </Menu>
       </Appbar.Header>
       <CalendlyWidget />
-      {!isLoading && (
-        <>
-          {schedules.map((schedule) => (
-            <View key={schedule.id}>
-              <Text>{schedule.event}</Text>
-              <Text>{schedule.reschedule_url}</Text>
-            </View>
-          ))}
-        </>
-      )}
     </View>
   );
 }
@@ -96,8 +116,9 @@ const createStyles = (theme: MD3Theme) =>
       backgroundColor: theme.colors.surface,
     },
     avatar: {
-      color: theme.colors.backdrop,
-      backgroundColor: theme.colors.primary,
+      width: 40,
+      height: 40,
       borderRadius: 20,
+      marginRight: 10,
     },
   });
