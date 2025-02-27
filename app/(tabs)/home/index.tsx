@@ -4,10 +4,10 @@ import { Text, Button } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link } from 'expo-router';
 
-export default function WelcomeScreen() {
+export default function HomeScreen() {
   return (
     <ImageBackground
-      source={require('../../assets/images/background-intro.png')}
+      source={require('../../../assets/images/background-intro.png')}
       style={styles.background}
     >
       <StatusBar barStyle="light-content" />

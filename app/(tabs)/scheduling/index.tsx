@@ -15,7 +15,7 @@ import {
   useTheme,
 } from 'react-native-paper';
 import z from 'zod';
-import { useClerkQuery } from '../hooks/useClerkQuery';
+import { useClerkQuery } from '../../hooks/useClerkQuery';
 
 const scheduleSchema = z.array(
   z.object({
@@ -74,10 +74,10 @@ export default function ProductScreen() {
     <View style={styles.container}>
       {/* App Header */}
       <Appbar.Header style={styles.appBar}>
-        <Appbar.Action
+        {/* <Appbar.Action
           icon="menu"
           onPress={() => console.log('Menu clicked')}
-        />
+        /> */}
         <Appbar.Content title="Schedule" color={theme.colors.onSurface} />
         {/* Clickable Avatar with Menu */}
         <Menu
