@@ -10,6 +10,7 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  ImageBackground,
 } from 'react-native';
 import {
   Appbar,
@@ -27,6 +28,7 @@ import {
 import { z } from 'zod';
 import moment from 'moment';
 import { usePreferences } from '@/app/context/preferencesContext';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const scheduleSchema = z.array(
   z.object({
@@ -81,64 +83,67 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <Appbar.Header style={styles.appBar}>
-        <Appbar.Content
-          title="My Profile"
-          titleStyle={styles.appBarTitle}
-          color={theme.colors.onSurface}
-        />
-      </Appbar.Header>
+      <Surface style={styles.heroContainer} elevation={4}>
+        <ImageBackground
+          source={require('../../../assets/images/app-background.png')}
+          style={styles.heroImage}
+          imageStyle={styles.heroImageStyle}
+        >
+          <LinearGradient
+            colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.7)']}
+            style={styles.heroOverlay}
+          >
+            <View style={styles.heroContent}>
+              <Avatar.Image size={100} source={{ uri: user.imageUrl }} />
+              <Text variant="headlineMedium" style={styles.heroTitle}>
+                {user.fullName}
+              </Text>
+              <Text variant="bodyLarge" style={styles.heroSubtitle}>
+                {user.primaryEmailAddress?.emailAddress}
+              </Text>
+            </View>
+          </LinearGradient>
+        </ImageBackground>
+      </Surface>
 
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
         showsVerticalScrollIndicator={false}
       >
-        <Surface style={styles.profileHeader}>
-          <Avatar.Image size={100} source={{ uri: user.imageUrl }} />
-          <Text variant="headlineSmall" style={styles.name}>
-            {user.fullName}
-          </Text>
-          <Text variant="bodyMedium" style={styles.email}>
-            {user.primaryEmailAddress?.emailAddress}
-          </Text>
-        </Surface>
-
-        <Card style={styles.infoCard} mode="outlined">
-          <Card.Content>
-            <View style={styles.infoRow}>
-              <FontAwesome6
-                name="calendar"
-                size={16}
-                color={theme.colors.primary}
-              />
-              <Text variant="titleMedium" style={styles.infoLabel}>
-                Member since
-              </Text>
-              <Text variant="bodyLarge" style={styles.infoValue}>
-                {user.createdAt
-                  ? new Date(user.createdAt).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })
-                  : 'N/A'}
-              </Text>
-            </View>
-            <Divider style={styles.divider} />
-            <View style={styles.infoRow}>
-              <FontAwesome6
-                name={isThemeDark ? 'moon' : 'sun'}
-                size={16}
-                color={theme.colors.primary}
-              />
-              <Text variant="titleMedium" style={styles.infoLabel}>
-                Dark Mode
-              </Text>
-              <Switch value={isThemeDark} onValueChange={toggleTheme} />
-            </View>
-          </Card.Content>
-        </Card>
+        <View style={styles.infoCard}>
+          <View style={styles.infoRow}>
+            <FontAwesome6
+              name="calendar"
+              size={16}
+              color={theme.colors.primary}
+            />
+            <Text variant="titleMedium" style={styles.infoLabel}>
+              Member since
+            </Text>
+            <Text variant="bodyLarge" style={styles.infoValue}>
+              {user.createdAt
+                ? new Date(user.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })
+                : 'N/A'}
+            </Text>
+          </View>
+          <Divider style={styles.divider} />
+          <View style={styles.infoRow}>
+            <FontAwesome6
+              name={isThemeDark ? 'moon' : 'sun'}
+              size={16}
+              color={theme.colors.primary}
+            />
+            <Text variant="titleMedium" style={styles.infoLabel}>
+              Dark Mode
+            </Text>
+            <Switch value={isThemeDark} onValueChange={toggleTheme} />
+          </View>
+        </View>
 
         <Button
           mode="contained"
@@ -288,9 +293,12 @@ const createStyles = (theme: MD3Theme) =>
     },
     scrollView: {
       flex: 1,
+      borderTopEndRadius: 64,
+      marginTop: -64,
+      backgroundColor: theme.colors.background,
     },
     scrollViewContent: {
-      padding: 16,
+      padding: 32,
     },
     appBar: {
       backgroundColor: theme.colors.surface,
@@ -317,7 +325,6 @@ const createStyles = (theme: MD3Theme) =>
     infoCard: {
       marginBottom: 24,
       borderRadius: 12,
-      backgroundColor: theme.colors.surfaceVariant,
     },
     infoRow: {
       flexDirection: 'row',
@@ -429,5 +436,37 @@ const createStyles = (theme: MD3Theme) =>
     },
     loadingIndicator: {
       margin: 20,
+    },
+    heroContainer: {
+      height: 340,
+      width: '100%',
+      overflow: 'hidden',
+    },
+    heroImage: {
+      flex: 1,
+      justifyContent: 'flex-end',
+    },
+    heroImageStyle: {
+      resizeMode: 'cover',
+    },
+    heroOverlay: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      paddingBottom: 64,
+    },
+    heroContent: {
+      paddingTop: 240,
+      alignItems: 'center',
+    },
+    heroTitle: {
+      color: 'white',
+      fontWeight: 'bold',
+      marginBottom: 8,
+      fontFamily: 'serif',
+    },
+    heroSubtitle: {
+      color: 'rgba(255, 255, 255, 0.9)',
+      fontWeight: '500',
+      marginBottom: 12,
     },
   });

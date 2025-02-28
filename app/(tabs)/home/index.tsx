@@ -94,6 +94,29 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle={statusBarStyle} />
+      {/* Hero Section */}
+      <Surface style={styles.heroContainer} elevation={4}>
+        <ImageBackground
+          source={require('../../../assets/images/app-background.png')}
+          style={styles.heroImage}
+          imageStyle={styles.heroImageStyle}
+        >
+          <LinearGradient
+            colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.7)']}
+            style={styles.heroOverlay}
+          >
+            <View style={styles.heroContent}>
+              <Text variant="headlineMedium" style={styles.heroTitle}>
+                Tailored Perfection
+              </Text>
+              <Text variant="bodyLarge" style={styles.heroSubtitle}>
+                Book your appointment for a personalized fashion experience
+              </Text>
+            </View>
+          </LinearGradient>
+        </ImageBackground>
+      </Surface>
+
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -101,31 +124,8 @@ export default function HomeScreen() {
         onScroll={handleScroll}
         scrollEventThrottle={16} // Throttle for better performance
       >
-        {/* Hero Section */}
-        <Surface style={styles.heroContainer} elevation={4}>
-          <ImageBackground
-            source={require('../../../assets/images/app-background.png')}
-            style={styles.heroImage}
-            imageStyle={styles.heroImageStyle}
-          >
-            <LinearGradient
-              colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.7)']}
-              style={styles.heroOverlay}
-            >
-              <View style={styles.heroContent}>
-                <Text variant="headlineMedium" style={styles.heroTitle}>
-                  Tailored Perfection
-                </Text>
-                <Text variant="bodyLarge" style={styles.heroSubtitle}>
-                  Book your appointment for a personalized fashion experience
-                </Text>
-              </View>
-            </LinearGradient>
-          </ImageBackground>
-        </Surface>
-
         {/* Services Section */}
-        <Surface style={styles.content} elevation={4}>
+        <View style={styles.content}>
           <Text variant="headlineSmall" style={styles.sectionTitle}>
             Our Services
           </Text>
@@ -213,7 +213,7 @@ export default function HomeScreen() {
               ))}
             </View>
           )}
-        </Surface>
+        </View>
 
         {/* About Section */}
         <Surface style={styles.aboutSection}>
@@ -262,6 +262,9 @@ const createStyles = (theme: MD3Theme) =>
     },
     scrollView: {
       flex: 1,
+      borderTopEndRadius: 64,
+      marginTop: -64,
+      backgroundColor: theme.colors.background,
     },
     scrollContent: {
       paddingBottom: 24,
@@ -282,11 +285,6 @@ const createStyles = (theme: MD3Theme) =>
       height: 280,
       width: '100%',
       overflow: 'hidden',
-    },
-    content: {
-      backgroundColor: theme.colors.background,
-      borderStartEndRadius: 64,
-      marginTop: -64,
     },
     heroImage: {
       flex: 1,
@@ -313,6 +311,9 @@ const createStyles = (theme: MD3Theme) =>
       color: 'rgba(255, 255, 255, 0.9)',
       fontWeight: '500',
       marginBottom: 12,
+    },
+    content: {
+      backgroundColor: theme.colors.background,
     },
     sectionTitle: {
       marginTop: 24,

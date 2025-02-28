@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import { useSSO } from '@clerk/clerk-expo';
-import { View, Button, StyleSheet, Image } from 'react-native';
+import { View, Button, StyleSheet, Image, ImageBackground } from 'react-native';
 import { SButton } from '../components/Button';
+import { MD3Theme, Surface, useTheme } from 'react-native-paper';
 
 export const useWarmUpBrowser = () => {
   useEffect(() => {
@@ -20,6 +21,8 @@ export const useWarmUpBrowser = () => {
 WebBrowser.maybeCompleteAuthSession();
 
 export default function Page() {
+  const theme = useTheme();
+  const styles = createStyles(theme);
   useWarmUpBrowser();
 
   // Use the `useSSO()` hook to access the `startSSOFlow()` method
@@ -75,39 +78,63 @@ export default function Page() {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require('../../assets/images/SM-couture-logo.png')}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-      <SButton
-        icon="logo-google"
-        title="Sign in with Google"
-        onPress={onGoogleSignIn}
-      />
-      <SButton
-        icon="logo-apple"
-        title="Sign in with Apple"
-        onPress={onAppleSignIn}
-      />
+      <Surface style={styles.heroContainer} elevation={4}>
+        <ImageBackground
+          source={require('../../assets/images/app-background-logo.png')}
+          style={styles.heroImage}
+          imageStyle={styles.heroImageStyle}
+        />
+      </Surface>
+      <View style={styles.content}>
+        <SButton
+          icon="logo-google"
+          title="Sign in with Google"
+          onPress={onGoogleSignIn}
+        />
+        <SButton
+          icon="logo-apple"
+          title="Sign in with Apple"
+          onPress={onAppleSignIn}
+        />
+      </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 32,
-    justifyContent: 'center',
-    gap: 12,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-  },
-  logo: {
-    width: 200,
-    height: 200,
-    alignSelf: 'center',
-  },
-});
+const createStyles = (theme: MD3Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      gap: 12,
+    },
+    title: {
+      fontSize: 22,
+      fontWeight: 'bold',
+    },
+    logo: {
+      width: 200,
+      height: 200,
+      alignSelf: 'center',
+    },
+    heroContainer: {
+      height: 500,
+      width: '100%',
+      overflow: 'hidden',
+    },
+    heroImage: {
+      flex: 1,
+      justifyContent: 'flex-end',
+    },
+    heroImageStyle: {
+      resizeMode: 'cover',
+    },
+    content: {
+      paddingTop: 64,
+      paddingHorizontal: 64,
+      backgroundColor: theme.colors.background,
+      borderStartEndRadius: 64,
+      marginTop: -124,
+      flex: 1,
+      gap: 24,
+    },
+  });
