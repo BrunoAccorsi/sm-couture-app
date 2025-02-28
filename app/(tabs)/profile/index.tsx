@@ -1,34 +1,26 @@
+import { usePreferences } from '@/app/context/preferencesContext';
 import { useClerkQuery } from '@/app/hooks/useClerkQuery';
 import { useClerk, useUser } from '@clerk/clerk-expo';
 import { FontAwesome6 } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Linking from 'expo-linking';
 import { useRouter } from 'expo-router';
+import moment from 'moment';
 import React from 'react';
+import { ImageBackground, ScrollView, StyleSheet, View } from 'react-native';
 import {
-  StyleSheet,
-  View,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-  ImageBackground,
-} from 'react-native';
-import {
-  Appbar,
+  ActivityIndicator,
   Avatar,
   Button,
   Card,
   Divider,
   MD3Theme,
-  Text,
-  useTheme,
-  ActivityIndicator,
   Surface,
   Switch,
+  Text,
+  useTheme,
 } from 'react-native-paper';
 import { z } from 'zod';
-import moment from 'moment';
-import { usePreferences } from '@/app/context/preferencesContext';
-import { LinearGradient } from 'expo-linear-gradient';
 
 const scheduleSchema = z.array(
   z.object({
@@ -151,6 +143,7 @@ export default function ProfileScreen() {
           onPress={handleSignOut}
           style={styles.signOutButton}
           contentStyle={styles.signOutButtonContent}
+          labelStyle={{ color: theme.colors.onError }}
         >
           Sign Out
         </Button>
@@ -258,21 +251,19 @@ export default function ProfileScreen() {
                 ))}
               </>
             ) : (
-              <Card style={styles.emptyStateCard}>
-                <Card.Content style={styles.emptyStateContent}>
-                  <FontAwesome6
-                    name="calendar-xmark"
-                    size={48}
-                    color={theme.colors.onSurfaceDisabled}
-                  />
-                  <Text variant="titleMedium" style={styles.emptyStateText}>
-                    No appointments scheduled
-                  </Text>
-                  <Text variant="bodyMedium" style={styles.emptyStateSubtext}>
-                    Your upcoming appointments will appear here
-                  </Text>
-                </Card.Content>
-              </Card>
+              <View style={styles.emptyStateCard}>
+                <FontAwesome6
+                  name="calendar-xmark"
+                  size={48}
+                  color={theme.colors.onSurfaceDisabled}
+                />
+                <Text variant="titleMedium" style={styles.emptyStateText}>
+                  No appointments scheduled
+                </Text>
+                <Text variant="bodyMedium" style={styles.emptyStateSubtext}>
+                  Your upcoming appointments will appear here
+                </Text>
+              </View>
             )}
           </>
         )}
@@ -430,6 +421,7 @@ const createStyles = (theme: MD3Theme) =>
       marginTop: 8,
       marginBottom: 24,
       backgroundColor: theme.colors.errorContainer,
+      color: theme.colors.onError,
     },
     signOutButtonContent: {
       paddingVertical: 6,

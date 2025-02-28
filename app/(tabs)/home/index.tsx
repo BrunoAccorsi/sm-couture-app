@@ -45,9 +45,6 @@ export default function HomeScreen() {
   const styles = createStyles(theme);
   const router = useRouter();
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [statusBarStyle, setStatusBarStyle] = useState<
-    'light-content' | 'dark-content'
-  >('light-content');
   const colorScheme = useColorScheme();
 
   // Default to light-content for dark mode and dark-content for light mode
@@ -78,22 +75,9 @@ export default function HomeScreen() {
     return 'calendar-check'; // default icon
   };
 
-  // Handle scroll events to change status bar style dynamically
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const scrollPosition = event.nativeEvent.contentOffset.y;
-
-    // When at the top of the screen (hero image visible), use light-content
-    // When scrolled down (past the hero section), use the default based on theme
-    if (scrollPosition < 100) {
-      setStatusBarStyle('light-content');
-    } else {
-      setStatusBarStyle(defaultStatusBarStyle);
-    }
-  };
-
   return (
     <View style={styles.container}>
-      <StatusBar barStyle={statusBarStyle} />
+      <StatusBar barStyle="light-content" />
       {/* Hero Section */}
       <Surface style={styles.heroContainer} elevation={4}>
         <ImageBackground
@@ -121,7 +105,6 @@ export default function HomeScreen() {
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
-        onScroll={handleScroll}
         scrollEventThrottle={16} // Throttle for better performance
       >
         {/* Services Section */}
