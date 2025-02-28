@@ -68,14 +68,6 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Appbar.Header style={styles.appBar}>
-        <Appbar.Content
-          title="SM Couture"
-          titleStyle={styles.appBarTitle}
-          color={theme.colors.onSurface}
-        />
-      </Appbar.Header>
-
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -84,7 +76,7 @@ export default function HomeScreen() {
         {/* Hero Section */}
         <Surface style={styles.heroContainer} elevation={4}>
           <ImageBackground
-            source={require('../../../assets/images/background-intro.png')}
+            source={require('../../../assets/images/app-background.png')}
             style={styles.heroImage}
             imageStyle={styles.heroImageStyle}
           >
@@ -105,93 +97,95 @@ export default function HomeScreen() {
         </Surface>
 
         {/* Services Section */}
-        <Text variant="headlineSmall" style={styles.sectionTitle}>
-          Our Services
-        </Text>
+        <Surface style={styles.content} elevation={4}>
+          <Text variant="headlineSmall" style={styles.sectionTitle}>
+            Our Services
+          </Text>
 
-        {isLoading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={theme.colors.primary} />
-            <Text style={styles.loadingText}>
-              Loading available appointments...
-            </Text>
-          </View>
-        ) : (
-          <View style={styles.eventsContainer}>
-            {events.map((event) => (
-              <Card
-                key={event.name}
-                style={styles.card}
-                mode="outlined"
-                onPress={() => toggleExpanded(event.name)}
-              >
-                <Card.Content style={styles.cardContent}>
-                  <View style={styles.cardHeader}>
-                    <FontAwesome6
-                      name={getEventIcon(event.name)}
-                      size={24}
-                      color={theme.colors.primary}
-                      style={styles.cardIcon}
-                    />
-                    <Text variant="titleMedium" style={styles.cardTitle}>
-                      {event.name}
-                    </Text>
-                  </View>
+          {isLoading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={theme.colors.primary} />
+              <Text style={styles.loadingText}>
+                Loading available appointments...
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.eventsContainer}>
+              {events.map((event) => (
+                <Card
+                  key={event.name}
+                  style={styles.card}
+                  mode="outlined"
+                  onPress={() => toggleExpanded(event.name)}
+                >
+                  <Card.Content style={styles.cardContent}>
+                    <View style={styles.cardHeader}>
+                      <FontAwesome6
+                        name={getEventIcon(event.name)}
+                        size={24}
+                        color={theme.colors.primary}
+                        style={styles.cardIcon}
+                      />
+                      <Text variant="titleMedium" style={styles.cardTitle}>
+                        {event.name}
+                      </Text>
+                    </View>
 
-                  <Text
-                    variant="bodyMedium"
-                    style={styles.cardDescription}
-                    numberOfLines={expandedId === event.name ? undefined : 2}
-                  >
-                    {event.description_plain}
-                  </Text>
-
-                  {event.description_plain.length > 120 && (
                     <Text
-                      variant="bodySmall"
-                      onPress={() => toggleExpanded(event.name)}
-                      style={styles.readMore}
+                      variant="bodyMedium"
+                      style={styles.cardDescription}
+                      numberOfLines={expandedId === event.name ? undefined : 2}
                     >
-                      {expandedId === event.name ? 'Read less' : 'Read more'}
+                      {event.description_plain}
                     </Text>
-                  )}
 
-                  <View style={styles.chipContainer}>
-                    <Chip
-                      icon="clock"
-                      style={styles.chip}
-                      textStyle={styles.chipText}
-                    >
-                      60 min
-                    </Chip>
-                    <Chip
-                      icon="map-marker"
-                      style={styles.chip}
-                      textStyle={styles.chipText}
-                    >
-                      In-studio
-                    </Chip>
-                  </View>
+                    {event.description_plain.length > 120 && (
+                      <Text
+                        variant="bodySmall"
+                        onPress={() => toggleExpanded(event.name)}
+                        style={styles.readMore}
+                      >
+                        {expandedId === event.name ? 'Read less' : 'Read more'}
+                      </Text>
+                    )}
 
-                  <Button
-                    mode="contained"
-                    icon="calendar-plus"
-                    contentStyle={styles.buttonContent}
-                    style={styles.scheduleButton}
-                    onPress={() => {
-                      router.push({
-                        pathname: '/scheduling',
-                        params: { url: event.scheduling_url },
-                      });
-                    }}
-                  >
-                    Schedule Appointment
-                  </Button>
-                </Card.Content>
-              </Card>
-            ))}
-          </View>
-        )}
+                    <View style={styles.chipContainer}>
+                      <Chip
+                        icon="clock"
+                        style={styles.chip}
+                        textStyle={styles.chipText}
+                      >
+                        60 min
+                      </Chip>
+                      <Chip
+                        icon="map-marker"
+                        style={styles.chip}
+                        textStyle={styles.chipText}
+                      >
+                        In-studio
+                      </Chip>
+                    </View>
+
+                    <Button
+                      mode="contained"
+                      icon="calendar-plus"
+                      contentStyle={styles.buttonContent}
+                      style={styles.scheduleButton}
+                      onPress={() => {
+                        router.push({
+                          pathname: '/scheduling',
+                          params: { url: event.scheduling_url },
+                        });
+                      }}
+                    >
+                      Schedule Appointment
+                    </Button>
+                  </Card.Content>
+                </Card>
+              ))}
+            </View>
+          )}
+        </Surface>
 
         {/* About Section */}
         <Surface style={styles.aboutSection}>
@@ -232,8 +226,6 @@ export default function HomeScreen() {
   );
 }
 
-const { width } = Dimensions.get('window');
-
 const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
     container: {
@@ -247,6 +239,7 @@ const createStyles = (theme: MD3Theme) =>
       paddingBottom: 24,
     },
     appBar: {
+      backgroundImage: 'url(../../../assets/images/app-background.png)',
       backgroundColor: theme.colors.surface,
       elevation: 0,
       borderBottomWidth: 1,
@@ -258,9 +251,14 @@ const createStyles = (theme: MD3Theme) =>
       fontFamily: 'serif',
     },
     heroContainer: {
-      height: 220,
+      height: 280,
       width: '100%',
       overflow: 'hidden',
+    },
+    content: {
+      backgroundColor: theme.colors.background,
+      borderStartEndRadius: 64,
+      marginTop: -64,
     },
     heroImage: {
       flex: 1,
@@ -272,6 +270,7 @@ const createStyles = (theme: MD3Theme) =>
     heroOverlay: {
       flex: 1,
       justifyContent: 'flex-end',
+      paddingBottom: 64,
     },
     heroContent: {
       padding: 20,
