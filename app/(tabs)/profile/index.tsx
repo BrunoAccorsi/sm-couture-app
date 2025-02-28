@@ -54,14 +54,6 @@ export default function ProfileScreen() {
     }
   };
 
-  if (!user) {
-    return (
-      <View style={[styles.container, styles.loadingContainer]}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
-    );
-  }
-
   const { data, isLoading } = useClerkQuery({
     queryKey: ['test'],
     url: 'https://sm-couture-app-api-a19z.vercel.app/api/schedules',
@@ -72,6 +64,14 @@ export default function ProfileScreen() {
 
   const parsedData = scheduleSchema.safeParse(data?.data);
   const schedules = parsedData.success ? parsedData.data : [];
+
+  if (!user) {
+    return (
+      <View style={[styles.container, styles.loadingContainer]}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
