@@ -2,7 +2,7 @@ import { useCalendlyQuery } from '@/app/hooks/useCalendlyQuery';
 import { FontAwesome6 } from '@expo/vector-icons';
 import * as Linking from 'expo-linking';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   StyleSheet,
   View,
@@ -10,6 +10,10 @@ import {
   ImageBackground,
   Dimensions,
   Image,
+  StatusBar,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  useColorScheme,
 } from 'react-native';
 import {
   Appbar,
@@ -41,6 +45,14 @@ export default function HomeScreen() {
   const styles = createStyles(theme);
   const router = useRouter();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [statusBarStyle, setStatusBarStyle] = useState<
+    'light-content' | 'dark-content'
+  >('light-content');
+  const colorScheme = useColorScheme();
+
+  // Default to light-content for dark mode and dark-content for light mode
+  const defaultStatusBarStyle =
+    colorScheme === 'dark' ? 'light-content' : 'dark-content';
 
   const { data, isLoading } = useCalendlyQuery({
     queryKey: ['events'],
@@ -66,12 +78,28 @@ export default function HomeScreen() {
     return 'calendar-check'; // default icon
   };
 
+  // Handle scroll events to change status bar style dynamically
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const scrollPosition = event.nativeEvent.contentOffset.y;
+
+    // When at the top of the screen (hero image visible), use light-content
+    // When scrolled down (past the hero section), use the default based on theme
+    if (scrollPosition < 100) {
+      setStatusBarStyle('light-content');
+    } else {
+      setStatusBarStyle(defaultStatusBarStyle);
+    }
+  };
+
   return (
     <View style={styles.container}>
+      <StatusBar barStyle={statusBarStyle} />
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        onScroll={handleScroll}
+        scrollEventThrottle={16} // Throttle for better performance
       >
         {/* Hero Section */}
         <Surface style={styles.heroContainer} elevation={4}>
