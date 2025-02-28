@@ -45,21 +45,25 @@ export default function ProfileScreen() {
           source={{ uri: user.imageUrl }}
           style={styles.avatar}
         />
-        
+
         <Text variant="headlineMedium" style={styles.name}>
           {user.fullName}
         </Text>
-        
+
         <Card style={styles.card}>
           <Card.Content>
             <Text variant="titleMedium">Email</Text>
-            <Text variant="bodyLarge">{user.primaryEmailAddress?.emailAddress}</Text>
-            
+            <Text variant="bodyLarge">
+              {user.primaryEmailAddress?.emailAddress}
+            </Text>
+
             <Divider style={styles.divider} />
-            
+
             <Text variant="titleMedium">Created At</Text>
             <Text variant="bodyLarge">
-              {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+              {user.createdAt
+                ? new Date(user.createdAt).toLocaleDateString()
+                : 'N/A'}
             </Text>
           </Card.Content>
         </Card>

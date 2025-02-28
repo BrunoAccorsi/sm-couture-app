@@ -4,11 +4,17 @@ import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
 import { MD3Theme, useTheme } from 'react-native-paper';
 import { WebView } from 'react-native-webview';
 
-const CalendlyWidget = () => {
+type Props = {
+  url: string;
+};
+
+const CalendlyWidget = ({ url }: Props) => {
   const [isLoading, setIsLoading] = useState(true);
   const theme = useTheme();
   const styles = createStyles(theme);
   const { user } = useUser();
+
+  console.log(url);
 
   if (!user) {
     return null;
@@ -26,13 +32,13 @@ const CalendlyWidget = () => {
 
       <WebView
         source={{
-          uri: `https://calendly.com/b-bergoli/kids-corner?email=${user.primaryEmailAddress?.emailAddress}&name=${user.fullName}`,
+          uri: `${url}?email=${user.primaryEmailAddress?.emailAddress}&name=${user.fullName}`,
         }}
         opaque={false}
         style={{ opacity: isLoading ? 0 : 1, backgroundColor: 'transparent' }}
         javaScriptEnabled={true}
         domStorageEnabled={true}
-        onLoadEnd={() => setTimeout(() => setIsLoading(false), 2 * 1000)} // Adds 2s loading time for calendly to load branding
+        onLoadEnd={() => setIsLoading(false)} // Adds 2s loading time for calendly to load branding
       />
     </View>
   );

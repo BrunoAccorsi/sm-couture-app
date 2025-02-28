@@ -16,6 +16,7 @@ import {
 } from 'react-native-paper';
 import z from 'zod';
 import { useClerkQuery } from '../../hooks/useClerkQuery';
+import { useLocalSearchParams } from 'expo-router';
 
 const scheduleSchema = z.array(
   z.object({
@@ -31,6 +32,8 @@ const scheduleSchema = z.array(
 export type Schedule = z.infer<typeof scheduleSchema>;
 
 export default function ProductScreen() {
+  const { url } = useLocalSearchParams();
+
   const theme = useTheme();
   const styles = createStyles(theme);
   const { signOut } = useClerk();
@@ -101,7 +104,7 @@ export default function ProductScreen() {
           />
         </Menu>
       </Appbar.Header>
-      <CalendlyWidget />
+      <CalendlyWidget url={url} />
     </View>
   );
 }

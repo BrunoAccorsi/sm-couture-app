@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import { useSSO } from '@clerk/clerk-expo';
-import { View, Button, StyleSheet } from 'react-native';
+import { View, Button, StyleSheet, Image } from 'react-native';
 import { SButton } from '../components/Button';
 
 export const useWarmUpBrowser = () => {
@@ -75,6 +75,11 @@ export default function Page() {
 
   return (
     <View style={styles.container}>
+      <Image
+        source={require('../../assets/images/SM-couture-logo.png')}
+        style={styles.logo}
+        resizeMode="contain"
+      />
       <SButton
         icon="logo-google"
         title="Sign in with Google"
@@ -99,5 +104,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 'bold',
+  },
+  logo: {
+    width: 200,
+    height: 200,
+    alignSelf: 'center',
   },
 });
