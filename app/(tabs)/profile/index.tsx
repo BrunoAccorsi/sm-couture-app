@@ -24,6 +24,7 @@ import {
   Surface,
 } from 'react-native-paper';
 import { z } from 'zod';
+import moment from 'moment';
 
 const scheduleSchema = z.array(
   z.object({
@@ -163,10 +164,43 @@ export default function ProfileScreen() {
                       <Divider style={styles.divider} />
                       <View style={styles.appointmentDetails}>
                         <Text variant="bodyMedium" style={styles.detailLabel}>
-                          Created:
+                          Date:
                         </Text>
-                        <Text variant="bodyMedium">
-                          {new Date(schedule.createdAt).toLocaleDateString()}
+                        <Text variant="bodyMedium" style={styles.dateText}>
+                          {moment(schedule.start_time).format(
+                            'MMMM Do, YYYY [at] h:mm A'
+                          )}
+                        </Text>
+                      </View>
+                      <View style={styles.appointmentStatus}>
+                        <FontAwesome6
+                          name={
+                            schedule.status === 'active'
+                              ? 'check-circle'
+                              : 'clock'
+                          }
+                          size={16}
+                          color={
+                            schedule.status === 'active'
+                              ? theme.colors.primary
+                              : theme.colors.tertiary
+                          }
+                        />
+                        <Text
+                          variant="bodySmall"
+                          style={[
+                            styles.statusText,
+                            {
+                              color:
+                                schedule.status === 'active'
+                                  ? theme.colors.primary
+                                  : theme.colors.tertiary,
+                            },
+                          ]}
+                        >
+                          {schedule.status === 'active'
+                            ? 'Confirmed'
+                            : 'Pending Confirmation'}
                         </Text>
                       </View>
                       <View style={styles.appointmentActions}>
@@ -312,14 +346,26 @@ const createStyles = (theme: MD3Theme) =>
       backgroundColor: theme.colors.outlineVariant,
     },
     appointmentDetails: {
+      marginBottom: 12,
+    },
+    detailLabel: {
+      fontWeight: '500',
+      color: theme.colors.onSurfaceVariant,
+      marginBottom: 4,
+    },
+    dateText: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: theme.colors.onSurface,
+    },
+    appointmentStatus: {
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: 16,
     },
-    detailLabel: {
+    statusText: {
+      marginLeft: 8,
       fontWeight: '500',
-      marginRight: 8,
-      color: theme.colors.onSurfaceVariant,
     },
     appointmentActions: {
       flexDirection: 'row',
