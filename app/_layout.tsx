@@ -3,6 +3,7 @@ import { ClerkProvider } from '@clerk/clerk-expo';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Slot } from 'expo-router';
 import { Provider } from 'react-native-paper';
+import { PreferencesProvider } from './context/preferencesContext';
 
 const PUBLIC_CLERK_PUBLISHABLE_KEY = process.env
   .EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY as string;
@@ -16,9 +17,9 @@ export default function Layout() {
       publishableKey={PUBLIC_CLERK_PUBLISHABLE_KEY}
     >
       <QueryClientProvider client={queryClient}>
-        <Provider>
+        <PreferencesProvider>
           <Slot />
-        </Provider>
+        </PreferencesProvider>
       </QueryClientProvider>
     </ClerkProvider>
   );

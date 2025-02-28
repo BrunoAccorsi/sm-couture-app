@@ -22,9 +22,11 @@ import {
   useTheme,
   ActivityIndicator,
   Surface,
+  Switch,
 } from 'react-native-paper';
 import { z } from 'zod';
 import moment from 'moment';
+import { usePreferences } from '@/app/context/preferencesContext';
 
 const scheduleSchema = z.array(
   z.object({
@@ -47,6 +49,7 @@ export default function ProfileScreen() {
   const styles = createStyles(theme);
   const { signOut } = useClerk();
   const { user } = useUser();
+  const { isThemeDark, toggleTheme } = usePreferences();
 
   const handleSignOut = async () => {
     try {
@@ -101,16 +104,6 @@ export default function ProfileScreen() {
           </Text>
         </Surface>
 
-        <Button
-          mode="contained"
-          icon="logout"
-          onPress={handleSignOut}
-          style={styles.signOutButton}
-          contentStyle={styles.signOutButtonContent}
-        >
-          Sign Out
-        </Button>
-
         <Card style={styles.infoCard} mode="outlined">
           <Card.Content>
             <View style={styles.infoRow}>
@@ -132,8 +125,30 @@ export default function ProfileScreen() {
                   : 'N/A'}
               </Text>
             </View>
+            <Divider style={styles.divider} />
+            <View style={styles.infoRow}>
+              <FontAwesome6
+                name={isThemeDark ? 'moon' : 'sun'}
+                size={16}
+                color={theme.colors.primary}
+              />
+              <Text variant="titleMedium" style={styles.infoLabel}>
+                Dark Mode
+              </Text>
+              <Switch value={isThemeDark} onValueChange={toggleTheme} />
+            </View>
           </Card.Content>
         </Card>
+
+        <Button
+          mode="contained"
+          icon="logout"
+          onPress={handleSignOut}
+          style={styles.signOutButton}
+          contentStyle={styles.signOutButtonContent}
+        >
+          Sign Out
+        </Button>
 
         {isLoading ? (
           <ActivityIndicator style={styles.loadingIndicator} />
@@ -219,7 +234,7 @@ export default function ProfileScreen() {
                           Reschedule
                         </Button>
                         <Button
-                          mode="outlined"
+                          mode="contained-tonal"
                           icon="calendar-remove"
                           contentStyle={styles.buttonContent}
                           style={styles.cancelButton}

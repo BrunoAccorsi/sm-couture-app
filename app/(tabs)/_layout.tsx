@@ -1,18 +1,27 @@
 import { Tabs } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
+import { usePreferences } from '@/app/context/preferencesContext';
 
 export default function TabsLayout() {
   const theme = useTheme();
+  const { isThemeDark } = usePreferences();
 
   return (
     <Tabs
-      // tabBar = { props => <TabBar { ...props} />}
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
         tabBarShowLabel: true,
         tabBarHideOnKeyboard: true,
+        tabBarStyle: {
+          backgroundColor: theme.colors.surface,
+          borderTopColor: theme.colors.outline,
+        },
+        tabBarLabelStyle: {
+          fontWeight: '500',
+        },
       }}
     >
       <Tabs.Screen
@@ -31,6 +40,7 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="calendar-outline" size={size} color={color} />
           ),
+          // tabBarButton: () => null, // Hide the tab button
         }}
       />
       <Tabs.Screen
