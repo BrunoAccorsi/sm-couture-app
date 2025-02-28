@@ -18,19 +18,6 @@ import z from 'zod';
 import { useClerkQuery } from '../../hooks/useClerkQuery';
 import { useLocalSearchParams } from 'expo-router';
 
-const scheduleSchema = z.array(
-  z.object({
-    id: z.number(),
-    email: z.string(),
-    event: z.string(),
-    cancel_url: z.string(),
-    reschedule_url: z.string(),
-    createdAt: z.string(),
-  })
-);
-
-export type Schedule = z.infer<typeof scheduleSchema>;
-
 export default function ProductScreen() {
   const { url } = useLocalSearchParams();
 
@@ -52,22 +39,6 @@ export default function ProductScreen() {
       console.error(JSON.stringify(err, null, 2));
     }
   };
-
-  const { data, isLoading } = useClerkQuery({
-    queryKey: ['test'],
-    url: 'https://sm-couture-app-api-a19z.vercel.app/api/schedules',
-    config: {
-      params: { email: user?.primaryEmailAddress?.emailAddress },
-    },
-  });
-  console.log(data?.data);
-
-  const parsedData = scheduleSchema.safeParse(data?.data);
-
-  //scheduled events
-  const schedules = parsedData.success ? parsedData.data : [];
-  console.log(schedules);
-  console.log(user?.imageUrl);
 
   if (!user) {
     return null;
