@@ -2,6 +2,7 @@ import { useClerkQuery } from '@/app/hooks/useClerkQuery';
 import { useClerk, useUser } from '@clerk/clerk-expo';
 import { FontAwesome6 } from '@expo/vector-icons';
 import * as Linking from 'expo-linking';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import {
   StyleSheet,
@@ -32,12 +33,15 @@ const scheduleSchema = z.array(
     cancel_url: z.string(),
     reschedule_url: z.string(),
     createdAt: z.string(),
+    start_time: z.string(),
+    status: z.string(),
   })
 );
 
 export type Schedule = z.infer<typeof scheduleSchema>;
 
 export default function ProfileScreen() {
+  const router = useRouter();
   const theme = useTheme();
   const styles = createStyles(theme);
   const { signOut } = useClerk();
@@ -87,14 +91,7 @@ export default function ProfileScreen() {
         showsVerticalScrollIndicator={false}
       >
         <Surface style={styles.profileHeader}>
-          <View style={styles.avatarContainer}>
-            <Avatar.Image
-              size={100}
-              source={{ uri: user.imageUrl }}
-              style={styles.avatar}
-            />
-          </View>
-
+          <Avatar.Image size={100} source={{ uri: user.imageUrl }} />
           <Text variant="headlineSmall" style={styles.name}>
             {user.fullName}
           </Text>
@@ -102,6 +99,16 @@ export default function ProfileScreen() {
             {user.primaryEmailAddress?.emailAddress}
           </Text>
         </Surface>
+
+        <Button
+          mode="contained"
+          icon="logout"
+          onPress={handleSignOut}
+          style={styles.signOutButton}
+          contentStyle={styles.signOutButtonContent}
+        >
+          Sign Out
+        </Button>
 
         <Card style={styles.infoCard} mode="outlined">
           <Card.Content>
@@ -169,7 +176,10 @@ export default function ProfileScreen() {
                           contentStyle={styles.buttonContent}
                           style={styles.rescheduleButton}
                           onPress={() =>
-                            Linking.openURL(schedule.reschedule_url)
+                            router.push({
+                              pathname: '/scheduling',
+                              params: { url: schedule.reschedule_url },
+                            })
                           }
                         >
                           Reschedule
@@ -179,7 +189,12 @@ export default function ProfileScreen() {
                           icon="calendar-remove"
                           contentStyle={styles.buttonContent}
                           style={styles.cancelButton}
-                          onPress={() => Linking.openURL(schedule.cancel_url)}
+                          onPress={() =>
+                            router.push({
+                              pathname: '/scheduling',
+                              params: { url: schedule.cancel_url },
+                            })
+                          }
                         >
                           Cancel
                         </Button>
@@ -207,16 +222,6 @@ export default function ProfileScreen() {
             )}
           </>
         )}
-
-        <Button
-          mode="contained"
-          icon="logout"
-          onPress={handleSignOut}
-          style={styles.signOutButton}
-          contentStyle={styles.signOutButtonContent}
-        >
-          Sign Out
-        </Button>
       </ScrollView>
     </View>
   );
@@ -250,18 +255,6 @@ const createStyles = (theme: MD3Theme) =>
       padding: 20,
       marginBottom: 16,
       borderRadius: 12,
-      backgroundColor: theme.colors.primaryContainer,
-      elevation: 2,
-    },
-    avatarContainer: {
-      padding: 4,
-      backgroundColor: theme.colors.background,
-      borderRadius: 60,
-      marginBottom: 12,
-    },
-    avatar: {
-      borderWidth: 3,
-      borderColor: theme.colors.primary,
     },
     name: {
       fontWeight: 'bold',
