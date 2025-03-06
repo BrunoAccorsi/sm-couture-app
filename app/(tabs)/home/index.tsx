@@ -29,16 +29,28 @@ import {
 } from 'react-native-paper';
 import { z } from 'zod';
 import { LinearGradient } from 'expo-linear-gradient';
+import { stripHtmlTags } from '@/app/utils/utils';
 
 const EventsSchema = z.object({
   collection: z.array(
     z.object({
       name: z.string(),
-      description_plain: z.string(),
+      description_html: z.string(),
       scheduling_url: z.string(),
+      duration: z.number(),
+      locations: z
+        .array(
+          z.object({
+            kind: z.string(),
+            location: z.string(),
+          })
+        )
+        .nullable(),
     })
   ),
 });
+
+type Events = z.infer<typeof EventsSchema>;
 
 export default function HomeScreen() {
   const theme = useTheme();
@@ -122,78 +134,85 @@ export default function HomeScreen() {
             </View>
           ) : (
             <View style={styles.eventsContainer}>
-              {events.map((event) => (
-                <Card
-                  key={event.name}
-                  style={styles.card}
-                  mode="outlined"
-                  onPress={() => toggleExpanded(event.name)}
-                >
-                  <Card.Content style={styles.cardContent}>
-                    <View style={styles.cardHeader}>
-                      <FontAwesome6
-                        name={getEventIcon(event.name)}
-                        size={24}
-                        color={theme.colors.primary}
-                        style={styles.cardIcon}
-                      />
-                      <Text variant="titleMedium" style={styles.cardTitle}>
-                        {event.name}
-                      </Text>
-                    </View>
+              {events.map((event) => {
+                return (
+                  <Card
+                    key={event.name}
+                    style={styles.card}
+                    mode="outlined"
+                    onPress={() => toggleExpanded(event.name)}
+                  >
+                    <Card.Content style={styles.cardContent}>
+                      <View style={styles.cardHeader}>
+                        <FontAwesome6
+                          name={getEventIcon(event.name)}
+                          size={24}
+                          color={theme.colors.primary}
+                          style={styles.cardIcon}
+                        />
+                        <Text variant="titleMedium" style={styles.cardTitle}>
+                          {event.name}
+                        </Text>
+                      </View>
 
-                    <Text
-                      variant="bodyMedium"
-                      style={styles.cardDescription}
-                      numberOfLines={expandedId === event.name ? undefined : 2}
-                    >
-                      {event.description_plain}
-                    </Text>
-
-                    {event.description_plain.length > 120 && (
                       <Text
-                        variant="bodySmall"
-                        onPress={() => toggleExpanded(event.name)}
-                        style={styles.readMore}
+                        variant="bodyMedium"
+                        style={styles.cardDescription}
+                        numberOfLines={
+                          expandedId === event.name ? undefined : 2
+                        }
+                        ellipsizeMode="tail"
                       >
-                        {expandedId === event.name ? 'Read less' : 'Read more'}
+                        {stripHtmlTags(event.description_html)}
                       </Text>
-                    )}
 
-                    <View style={styles.chipContainer}>
-                      <Chip
-                        icon="clock"
-                        style={styles.chip}
-                        textStyle={styles.chipText}
-                      >
-                        60 min
-                      </Chip>
-                      <Chip
-                        icon="map-marker"
-                        style={styles.chip}
-                        textStyle={styles.chipText}
-                      >
-                        In-studio
-                      </Chip>
-                    </View>
+                      {event.description_html.length > 120 && (
+                        <Text
+                          variant="bodySmall"
+                          onPress={() => toggleExpanded(event.name)}
+                          style={styles.readMore}
+                        >
+                          {expandedId === event.name
+                            ? 'Read less'
+                            : 'Read more'}
+                        </Text>
+                      )}
 
-                    <Button
-                      mode="contained"
-                      icon="calendar-plus"
-                      contentStyle={styles.buttonContent}
-                      style={styles.scheduleButton}
-                      onPress={() => {
-                        router.push({
-                          pathname: '/scheduling',
-                          params: { url: event.scheduling_url },
-                        });
-                      }}
-                    >
-                      Schedule Appointment
-                    </Button>
-                  </Card.Content>
-                </Card>
-              ))}
+                      <View style={styles.chipContainer}>
+                        <Chip
+                          icon="clock"
+                          style={styles.chip}
+                          textStyle={styles.chipText}
+                        >
+                          {event.duration} min
+                        </Chip>
+                        <Chip
+                          icon="map-marker"
+                          style={styles.chip}
+                          textStyle={styles.chipText}
+                        >
+                          {event.locations?.[0]?.location || 'In-person'}
+                        </Chip>
+                      </View>
+
+                      <Button
+                        mode="contained"
+                        icon="calendar-plus"
+                        contentStyle={styles.buttonContent}
+                        style={styles.scheduleButton}
+                        onPress={() => {
+                          router.push({
+                            pathname: '/scheduling',
+                            params: { url: event.scheduling_url },
+                          });
+                        }}
+                      >
+                        Schedule Appointment
+                      </Button>
+                    </Card.Content>
+                  </Card>
+                );
+              })}
             </View>
           )}
         </View>
@@ -341,7 +360,7 @@ const createStyles = (theme: MD3Theme) =>
     },
     cardDescription: {
       color: theme.colors.onSurfaceVariant,
-      marginBottom: 12,
+      marginBottom: 6,
       lineHeight: 20,
     },
     readMore: {
