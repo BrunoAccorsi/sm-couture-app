@@ -34,16 +34,6 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="scheduling/index"
-        options={{
-          title: 'Calendar',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="calendar-outline" size={size} color={color} />
-          ),
-          // tabBarButton: () => null, // Hide the tab button
-        }}
-      />
-      <Tabs.Screen
         name="profile/index"
         options={{
           title: 'Profile',

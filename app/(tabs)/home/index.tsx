@@ -30,6 +30,7 @@ import {
 import { z } from 'zod';
 import { LinearGradient } from 'expo-linear-gradient';
 import { stripHtmlTags } from '@/app/utils/utils';
+import CalendlyModal from '@/app/components/CalendlyModal';
 
 const EventsSchema = z.object({
   collection: z.array(
@@ -57,6 +58,7 @@ export default function HomeScreen() {
   const styles = createStyles(theme);
   const router = useRouter();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [eventUrl, setEventUrl] = useState<string | null>(null);
   const colorScheme = useColorScheme();
 
   // Default to light-content for dark mode and dark-content for light mode
@@ -88,171 +90,184 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
-      {/* Hero Section */}
-      <Surface style={styles.heroContainer} elevation={4}>
-        <ImageBackground
-          source={require('../../../assets/images/app-background.png')}
-          style={styles.heroImage}
-          imageStyle={styles.heroImageStyle}
-        >
-          <LinearGradient
-            colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.7)']}
-            style={styles.heroOverlay}
+    <CalendlyModal eventUrl={eventUrl}>
+      {(onOpen) => (
+        <View style={styles.container}>
+          <StatusBar barStyle="light-content" />
+          {/* Hero Section */}
+          <Surface style={styles.heroContainer} elevation={4}>
+            <ImageBackground
+              source={require('../../../assets/images/app-background.png')}
+              style={styles.heroImage}
+              imageStyle={styles.heroImageStyle}
+            >
+              <LinearGradient
+                colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.7)']}
+                style={styles.heroOverlay}
+              >
+                <View style={styles.heroContent}>
+                  <Text variant="headlineMedium" style={styles.heroTitle}>
+                    Tailored Perfection
+                  </Text>
+                  <Text variant="bodyLarge" style={styles.heroSubtitle}>
+                    Book your appointment for a personalized fashion experience
+                  </Text>
+                </View>
+              </LinearGradient>
+            </ImageBackground>
+          </Surface>
+
+          <ScrollView
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+            scrollEventThrottle={16} // Throttle for better performance
           >
-            <View style={styles.heroContent}>
-              <Text variant="headlineMedium" style={styles.heroTitle}>
-                Tailored Perfection
-              </Text>
-              <Text variant="bodyLarge" style={styles.heroSubtitle}>
-                Book your appointment for a personalized fashion experience
-              </Text>
-            </View>
-          </LinearGradient>
-        </ImageBackground>
-      </Surface>
+            {/* Services Section */}
 
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-        scrollEventThrottle={16} // Throttle for better performance
-      >
-        {/* Services Section */}
-        <View style={styles.content}>
-          <Text variant="headlineSmall" style={styles.sectionTitle}>
-            Our Services
-          </Text>
-
-          {isLoading ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color={theme.colors.primary} />
-              <Text style={styles.loadingText}>
-                Loading available appointments...
+            <View style={styles.content}>
+              <Text variant="headlineSmall" style={styles.sectionTitle}>
+                Our Services
               </Text>
-            </View>
-          ) : (
-            <View style={styles.eventsContainer}>
-              {events.map((event) => {
-                return (
-                  <Card
-                    key={event.name}
-                    style={styles.card}
-                    mode="outlined"
-                    onPress={() => toggleExpanded(event.name)}
-                  >
-                    <Card.Content style={styles.cardContent}>
-                      <View style={styles.cardHeader}>
-                        <FontAwesome6
-                          name={getEventIcon(event.name)}
-                          size={24}
-                          color={theme.colors.primary}
-                          style={styles.cardIcon}
-                        />
-                        <Text variant="titleMedium" style={styles.cardTitle}>
-                          {event.name}
-                        </Text>
-                      </View>
 
-                      <Text
-                        variant="bodyMedium"
-                        style={styles.cardDescription}
-                        numberOfLines={
-                          expandedId === event.name ? undefined : 2
-                        }
-                        ellipsizeMode="tail"
+              {isLoading ? (
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator
+                    size="large"
+                    color={theme.colors.primary}
+                  />
+                  <Text style={styles.loadingText}>
+                    Loading available appointments...
+                  </Text>
+                </View>
+              ) : (
+                <View style={styles.eventsContainer}>
+                  {events.map((event) => {
+                    return (
+                      <Card
+                        key={event.name}
+                        style={styles.card}
+                        mode="outlined"
+                        onPress={() => toggleExpanded(event.name)}
                       >
-                        {stripHtmlTags(event.description_html)}
-                      </Text>
+                        <Card.Content style={styles.cardContent}>
+                          <View style={styles.cardHeader}>
+                            <FontAwesome6
+                              name={getEventIcon(event.name)}
+                              size={24}
+                              color={theme.colors.primary}
+                              style={styles.cardIcon}
+                            />
+                            <Text
+                              variant="titleMedium"
+                              style={styles.cardTitle}
+                            >
+                              {event.name}
+                            </Text>
+                          </View>
 
-                      {event.description_html.length > 120 && (
-                        <Text
-                          variant="bodySmall"
-                          onPress={() => toggleExpanded(event.name)}
-                          style={styles.readMore}
-                        >
-                          {expandedId === event.name
-                            ? 'Read less'
-                            : 'Read more'}
-                        </Text>
-                      )}
+                          <Text
+                            variant="bodyMedium"
+                            style={styles.cardDescription}
+                            numberOfLines={
+                              expandedId === event.name ? undefined : 2
+                            }
+                            ellipsizeMode="tail"
+                          >
+                            {stripHtmlTags(event.description_html)}
+                          </Text>
 
-                      <View style={styles.chipContainer}>
-                        <Chip
-                          icon="clock"
-                          style={styles.chip}
-                          textStyle={styles.chipText}
-                        >
-                          {event.duration} min
-                        </Chip>
-                        <Chip
-                          icon="map-marker"
-                          style={styles.chip}
-                          textStyle={styles.chipText}
-                        >
-                          {event.locations?.[0]?.location || 'In-person'}
-                        </Chip>
-                      </View>
+                          {event.description_html.length > 120 && (
+                            <Text
+                              variant="bodySmall"
+                              onPress={() => toggleExpanded(event.name)}
+                              style={styles.readMore}
+                            >
+                              {expandedId === event.name
+                                ? 'Read less'
+                                : 'Read more'}
+                            </Text>
+                          )}
 
-                      <Button
-                        mode="contained"
-                        icon="calendar-plus"
-                        contentStyle={styles.buttonContent}
-                        style={styles.scheduleButton}
-                        onPress={() => {
-                          router.push({
-                            pathname: '/scheduling',
-                            params: { url: event.scheduling_url },
-                          });
-                        }}
-                      >
-                        Schedule Appointment
-                      </Button>
-                    </Card.Content>
-                  </Card>
-                );
-              })}
+                          <View style={styles.chipContainer}>
+                            <Chip
+                              icon="clock"
+                              style={styles.chip}
+                              textStyle={styles.chipText}
+                            >
+                              {event.duration} min
+                            </Chip>
+                            <Chip
+                              icon="map-marker"
+                              style={styles.chip}
+                              textStyle={styles.chipText}
+                            >
+                              {event.locations?.[0]?.location || 'In-person'}
+                            </Chip>
+                          </View>
+
+                          <Button
+                            mode="contained"
+                            icon="calendar-plus"
+                            contentStyle={styles.buttonContent}
+                            style={styles.scheduleButton}
+                            onPress={() => {
+                              setEventUrl(event.scheduling_url);
+                              onOpen();
+                            }}
+                          >
+                            Schedule Appointment
+                          </Button>
+                        </Card.Content>
+                      </Card>
+                    );
+                  })}
+                </View>
+              )}
             </View>
-          )}
+
+            {/* About Section */}
+            <Surface style={styles.aboutSection}>
+              <Text variant="headlineSmall" style={styles.aboutTitle}>
+                About SM Couture
+              </Text>
+              <Divider style={styles.aboutDivider} />
+              <Text style={styles.aboutText}>
+                Specializing in bespoke fashion designs and tailoring services,
+                SM Couture creates unique pieces tailored perfectly to your
+                measurements and style preferences.
+              </Text>
+              <View style={styles.featureRow}>
+                <View style={styles.featureItem}>
+                  <FontAwesome6
+                    name="star"
+                    size={24}
+                    color={theme.colors.primary}
+                  />
+                  <Text style={styles.featureText}>Expert Tailoring</Text>
+                </View>
+                <View style={styles.featureItem}>
+                  <FontAwesome6
+                    name="hand-scissors"
+                    size={24}
+                    color={theme.colors.primary}
+                  />
+                  <Text style={styles.featureText}>Custom Designs</Text>
+                </View>
+                <View style={styles.featureItem}>
+                  <FontAwesome6
+                    name="gem"
+                    size={24}
+                    color={theme.colors.primary}
+                  />
+                  <Text style={styles.featureText}>Premium Quality</Text>
+                </View>
+              </View>
+            </Surface>
+          </ScrollView>
         </View>
-
-        {/* About Section */}
-        <Surface style={styles.aboutSection}>
-          <Text variant="headlineSmall" style={styles.aboutTitle}>
-            About SM Couture
-          </Text>
-          <Divider style={styles.aboutDivider} />
-          <Text style={styles.aboutText}>
-            Specializing in bespoke fashion designs and tailoring services, SM
-            Couture creates unique pieces tailored perfectly to your
-            measurements and style preferences.
-          </Text>
-          <View style={styles.featureRow}>
-            <View style={styles.featureItem}>
-              <FontAwesome6
-                name="star"
-                size={24}
-                color={theme.colors.primary}
-              />
-              <Text style={styles.featureText}>Expert Tailoring</Text>
-            </View>
-            <View style={styles.featureItem}>
-              <FontAwesome6
-                name="hand-scissors"
-                size={24}
-                color={theme.colors.primary}
-              />
-              <Text style={styles.featureText}>Custom Designs</Text>
-            </View>
-            <View style={styles.featureItem}>
-              <FontAwesome6 name="gem" size={24} color={theme.colors.primary} />
-              <Text style={styles.featureText}>Premium Quality</Text>
-            </View>
-          </View>
-        </Surface>
-      </ScrollView>
-    </View>
+      )}
+    </CalendlyModal>
   );
 }
 

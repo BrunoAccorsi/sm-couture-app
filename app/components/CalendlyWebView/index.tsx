@@ -14,8 +14,6 @@ const CalendlyWidget = ({ url }: Props) => {
   const styles = createStyles(theme);
   const { user } = useUser();
 
-  console.log(url);
-
   if (!user) {
     return null;
   }
