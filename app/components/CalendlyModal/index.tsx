@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 32,
     overflow: 'hidden',
+    paddingBottom: 128,
   },
   closeButtonContainer: {
     position: 'absolute',

@@ -62,6 +62,8 @@ export default function ProfileScreen() {
     config: {
       params: { email: user?.primaryEmailAddress?.emailAddress },
     },
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 
   const parsedData = scheduleSchema.safeParse(data?.data);
@@ -192,13 +194,13 @@ export default function ProfileScreen() {
                           name={
                             schedule.status === 'active'
                               ? 'check-circle'
-                              : 'clock'
+                              : 'circle-xmark'
                           }
                           size={16}
                           color={
                             schedule.status === 'active'
                               ? theme.colors.primary
-                              : theme.colors.tertiary
+                              : theme.colors.error
                           }
                         />
                         <Text
@@ -209,45 +211,47 @@ export default function ProfileScreen() {
                               color:
                                 schedule.status === 'active'
                                   ? theme.colors.primary
-                                  : theme.colors.tertiary,
+                                  : theme.colors.error,
                             },
                           ]}
                         >
                           {schedule.status === 'active'
                             ? 'Confirmed'
-                            : 'Pending Confirmation'}
+                            : 'Cancelled'}
                         </Text>
                       </View>
-                      <View style={styles.appointmentActions}>
-                        <Button
-                          mode="outlined"
-                          icon="calendar-clock"
-                          contentStyle={styles.buttonContent}
-                          style={styles.rescheduleButton}
-                          onPress={() =>
-                            router.push({
-                              pathname: '/scheduling',
-                              params: { url: schedule.reschedule_url },
-                            })
-                          }
-                        >
-                          Reschedule
-                        </Button>
-                        <Button
-                          mode="contained-tonal"
-                          icon="calendar-remove"
-                          contentStyle={styles.buttonContent}
-                          style={styles.cancelButton}
-                          onPress={() =>
-                            router.push({
-                              pathname: '/scheduling',
-                              params: { url: schedule.cancel_url },
-                            })
-                          }
-                        >
-                          Cancel
-                        </Button>
-                      </View>
+                      {schedule.status === 'active' && (
+                        <View style={styles.appointmentActions}>
+                          <Button
+                            mode="outlined"
+                            icon="calendar-clock"
+                            contentStyle={styles.buttonContent}
+                            style={styles.rescheduleButton}
+                            onPress={() =>
+                              router.push({
+                                pathname: '/scheduling',
+                                params: { url: schedule.reschedule_url },
+                              })
+                            }
+                          >
+                            Reschedule
+                          </Button>
+                          <Button
+                            mode="contained-tonal"
+                            icon="calendar-remove"
+                            contentStyle={styles.buttonContent}
+                            style={styles.cancelButton}
+                            onPress={() =>
+                              router.push({
+                                pathname: '/scheduling',
+                                params: { url: schedule.cancel_url },
+                              })
+                            }
+                          >
+                            Cancel
+                          </Button>
+                        </View>
+                      )}
                     </Card.Content>
                   </Card>
                 ))}
