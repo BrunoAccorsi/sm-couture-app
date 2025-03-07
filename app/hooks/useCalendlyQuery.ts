@@ -15,20 +15,31 @@ export function useCalendlyQuery<TData = unknown>({
   const calendlyToken = process.env.EXPO_PUBLIC_CALENDLY_API_KEY!;
   const calendlyBaseUrl = process.env.EXPO_PUBLIC_CALENDLY_API_URL!;
 
-  console.log(calendlyToken);
-  console.log(calendlyBaseUrl);
-  console.log(calendlyBaseUrl + url);
-
   return useQuery({
     ...queryOptions,
     queryFn: async () => {
-      return axios.get<TData>(calendlyBaseUrl + url, {
-        ...config,
-        headers: {
-          ...config.headers,
-          Authorization: `Bearer ${calendlyToken}`,
-        },
-      });
+      try {
+        const response = await axios.get<TData>(calendlyBaseUrl + url, {
+          ...config,
+          headers: {
+            ...config.headers,
+            Authorization: `Bearer ${calendlyToken}`,
+          },
+        });
+
+        return response;
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          const status = error.response?.status;
+          const errorMessage = error.response?.data?.message || error.message;
+
+          console.error(`Calendly API error: ${status} - ${errorMessage}`);
+          throw new Error(errorMessage || 'Error fetching data from Calendly');
+        }
+
+        console.error('Unexpected error:', error);
+        throw error;
+      }
     },
   });
 }

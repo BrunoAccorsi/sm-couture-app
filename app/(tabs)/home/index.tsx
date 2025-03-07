@@ -51,19 +51,11 @@ const EventsSchema = z.object({
   ),
 });
 
-type Events = z.infer<typeof EventsSchema>;
-
 export default function HomeScreen() {
   const theme = useTheme();
   const styles = createStyles(theme);
-  const router = useRouter();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [eventUrl, setEventUrl] = useState<string | null>(null);
-  const colorScheme = useColorScheme();
-
-  // Default to light-content for dark mode and dark-content for light mode
-  const defaultStatusBarStyle =
-    colorScheme === 'dark' ? 'light-content' : 'dark-content';
 
   const { data, isLoading } = useCalendlyQuery({
     queryKey: ['events'],

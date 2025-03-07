@@ -54,9 +54,11 @@ export default function ProfileScreen() {
     }
   };
 
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL!;
+
   const { data, isLoading } = useClerkQuery({
     queryKey: ['test'],
-    url: 'https://sm-couture-app-api-a19z.vercel.app/api/schedules',
+    url: `${apiUrl}/schedules`,
     config: {
       params: { email: user?.primaryEmailAddress?.emailAddress },
     },
