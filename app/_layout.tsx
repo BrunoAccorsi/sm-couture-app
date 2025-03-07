@@ -5,6 +5,7 @@ import { Slot } from 'expo-router';
 import { Provider } from 'react-native-paper';
 import { PreferencesProvider } from './context/preferencesContext';
 import { StatusBar } from 'react-native';
+import { CalendlyContext, CalendlyProvider } from './context/CalendlyContext';
 
 const PUBLIC_CLERK_PUBLISHABLE_KEY = process.env
   .EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY as string;
@@ -21,7 +22,9 @@ export default function Layout() {
       >
         <QueryClientProvider client={queryClient}>
           <PreferencesProvider>
-            <Slot />
+            <CalendlyProvider>
+              <Slot />
+            </CalendlyProvider>
           </PreferencesProvider>
         </QueryClientProvider>
       </ClerkProvider>

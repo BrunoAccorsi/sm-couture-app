@@ -1,14 +1,14 @@
+import { useCalendly } from '@/app/context/CalendlyContext';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import React, { useState } from 'react';
 import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
 import { MD3Theme, useTheme } from 'react-native-paper';
 import { WebView } from 'react-native-webview';
 
-type Props = {
-  url: string;
-};
+type Props = {};
 
-const CalendlyWidget = ({ url }: Props) => {
+const CalendlyWidget = ({}: Props) => {
+  const { url } = useCalendly();
   const [isLoading, setIsLoading] = useState(true);
   const theme = useTheme();
   const styles = createStyles(theme);

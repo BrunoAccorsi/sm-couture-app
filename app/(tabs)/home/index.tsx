@@ -31,6 +31,7 @@ import { z } from 'zod';
 import { LinearGradient } from 'expo-linear-gradient';
 import { stripHtmlTags } from '@/app/utils/utils';
 import CalendlyModal from '@/app/components/CalendlyModal';
+import { useCalendly } from '@/app/context/CalendlyContext';
 
 const EventsSchema = z.object({
   collection: z.array(
@@ -55,7 +56,7 @@ export default function HomeScreen() {
   const theme = useTheme();
   const styles = createStyles(theme);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [eventUrl, setEventUrl] = useState<string | null>(null);
+  const { setUrl } = useCalendly();
 
   const { data, isLoading } = useCalendlyQuery({
     queryKey: ['events'],
@@ -82,7 +83,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <CalendlyModal eventUrl={eventUrl}>
+    <CalendlyModal>
       {(onOpen) => (
         <View style={styles.container}>
           <StatusBar barStyle="light-content" />
@@ -204,7 +205,7 @@ export default function HomeScreen() {
                             contentStyle={styles.buttonContent}
                             style={styles.scheduleButton}
                             onPress={() => {
-                              setEventUrl(event.scheduling_url);
+                              setUrl(event.scheduling_url);
                               onOpen();
                             }}
                           >

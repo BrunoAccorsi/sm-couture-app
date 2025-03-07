@@ -4,13 +4,11 @@ import { StyleSheet, View, Dimensions, Animated } from 'react-native';
 import CalendlyWidget from '../CalendlyWebView';
 
 type Props = {
-  eventUrl: string | null;
   children: (onOpen: () => void) => React.ReactNode;
 };
 
-const CalendlyModal = ({ children, eventUrl }: Props) => {
+const CalendlyModal = ({ children }: Props) => {
   const [visible, setVisible] = React.useState(false);
-  const theme = useTheme();
   const animation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -27,8 +25,6 @@ const CalendlyModal = ({ children, eventUrl }: Props) => {
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
-
-  if (!eventUrl) return <>{children(() => {})}</>;
 
   // Animation transformations
   const translateY = animation.interpolate({
@@ -68,7 +64,7 @@ const CalendlyModal = ({ children, eventUrl }: Props) => {
             />
           </View>
           <View style={styles.widgetContainer}>
-            <CalendlyWidget url={eventUrl} />
+            <CalendlyWidget />
           </View>
         </Animated.View>
       </Modal>
