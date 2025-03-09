@@ -1,7 +1,6 @@
 import CalendlyModal from '@/app/components/CalendlyModal';
 import { useCalendly } from '@/app/context/CalendlyContext';
 import { useCalendlyQuery } from '@/app/hooks/useCalendlyQuery';
-import { stripHtmlTags } from '@/app/utils/utils';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
@@ -11,38 +10,19 @@ import {
   StatusBar,
   StyleSheet,
   View,
+  FlatList,
 } from 'react-native';
 import {
   ActivityIndicator,
-  Button,
-  Card,
-  Chip,
   Divider,
   MD3Theme,
   Surface,
   Text,
   useTheme,
 } from 'react-native-paper';
-import { z } from 'zod';
 
-const EventsSchema = z.object({
-  collection: z.array(
-    z.object({
-      name: z.string(),
-      description_html: z.string(),
-      scheduling_url: z.string(),
-      duration: z.number(),
-      locations: z
-        .array(
-          z.object({
-            kind: z.string(),
-            location: z.string(),
-          })
-        )
-        .nullable(),
-    })
-  ),
-});
+import { EventsSchema, type EventType } from '@/app/types/event.types';
+import EventCard from '@/app/components/EventCard';
 
 export default function HomeScreen() {
   const theme = useTheme();
@@ -65,196 +45,132 @@ export default function HomeScreen() {
     setExpandedId(expandedId === name ? null : name);
   };
 
-  // Function to get appropriate icon for event type
-  const getEventIcon = (name: string) => {
-    const nameLower = name.toLowerCase();
-    if (nameLower.includes('consultation')) return 'comments';
-    if (nameLower.includes('fitting')) return 'ruler';
-    if (nameLower.includes('design')) return 'pencil-ruler';
-    return 'calendar-check'; // default icon
+  const handleScheduleAppointment = (schedulingUrl: string) => {
+    setUrl(new URL(schedulingUrl));
   };
+
+  const renderEvent = ({ item }: { item: EventType }) => (
+    <EventCard
+      event={item}
+      isExpanded={expandedId === item.name}
+      onToggleExpand={() => toggleExpanded(item.name)}
+      onSchedule={handleScheduleAppointment}
+    />
+  );
+
+  const renderEventsContent = () => {
+    if (isLoading) {
+      return (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <Text style={styles.loadingText}>
+            Loading available appointments...
+          </Text>
+        </View>
+      );
+    }
+
+    return (
+      <View>
+        <FlatList
+          data={events}
+          renderItem={renderEvent}
+          keyExtractor={(item) => item.name}
+          contentContainerStyle={styles.eventsContainer}
+          showsVerticalScrollIndicator={false}
+          scrollEnabled={false}
+        />
+      </View>
+    );
+  };
+
+  const renderHeroSection = () => (
+    <Surface style={styles.heroContainer} elevation={4}>
+      <ImageBackground
+        source={require('@/assets/images/app-background.png')}
+        style={styles.heroImage}
+        imageStyle={styles.heroImageStyle}
+      >
+        <LinearGradient
+          colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.7)']}
+          style={styles.heroOverlay}
+        >
+          <View style={styles.heroContent}>
+            <Text variant="headlineMedium" style={styles.heroTitle}>
+              Tailored Perfection
+            </Text>
+            <Text variant="bodyLarge" style={styles.heroSubtitle}>
+              Book your appointment for a personalized fashion experience
+            </Text>
+          </View>
+        </LinearGradient>
+      </ImageBackground>
+    </Surface>
+  );
+
+  const renderAboutSection = () => (
+    <Surface style={styles.aboutSection}>
+      <Text variant="headlineSmall" style={styles.aboutTitle}>
+        About SM Couture
+      </Text>
+      <Divider style={styles.aboutDivider} />
+      <Text style={styles.aboutText}>
+        Specializing in bespoke fashion designs and tailoring services, SM
+        Couture creates unique pieces tailored perfectly to your measurements
+        and style preferences.
+      </Text>
+      <View style={styles.featureRow}>
+        <FeatureItem icon="star" text="Expert Tailoring" />
+        <FeatureItem icon="hand-scissors" text="Custom Designs" />
+        <FeatureItem icon="gem" text="Premium Quality" />
+      </View>
+    </Surface>
+  );
 
   return (
     <CalendlyModal>
       {(onOpen) => (
         <View style={styles.container}>
           <StatusBar barStyle="light-content" />
-          {/* Hero Section */}
-          <Surface style={styles.heroContainer} elevation={4}>
-            <ImageBackground
-              source={require('../../../assets/images/app-background.png')}
-              style={styles.heroImage}
-              imageStyle={styles.heroImageStyle}
-            >
-              <LinearGradient
-                colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.7)']}
-                style={styles.heroOverlay}
-              >
-                <View style={styles.heroContent}>
-                  <Text variant="headlineMedium" style={styles.heroTitle}>
-                    Tailored Perfection
-                  </Text>
-                  <Text variant="bodyLarge" style={styles.heroSubtitle}>
-                    Book your appointment for a personalized fashion experience
-                  </Text>
-                </View>
-              </LinearGradient>
-            </ImageBackground>
-          </Surface>
+          {renderHeroSection()}
 
           <ScrollView
             style={styles.scrollView}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.scrollContent}
-            scrollEventThrottle={16} // Throttle for better performance
+            scrollEventThrottle={16}
           >
-            {/* Services Section */}
-
             <View style={styles.content}>
               <Text variant="headlineSmall" style={styles.sectionTitle}>
                 Our Services
               </Text>
-
-              {isLoading ? (
-                <View style={styles.loadingContainer}>
-                  <ActivityIndicator
-                    size="large"
-                    color={theme.colors.primary}
-                  />
-                  <Text style={styles.loadingText}>
-                    Loading available appointments...
-                  </Text>
-                </View>
-              ) : (
-                <View style={styles.eventsContainer}>
-                  {events.map((event) => {
-                    return (
-                      <Card
-                        key={event.name}
-                        style={styles.card}
-                        mode="outlined"
-                        onPress={() => toggleExpanded(event.name)}
-                      >
-                        <Card.Content style={styles.cardContent}>
-                          <View style={styles.cardHeader}>
-                            <FontAwesome6
-                              name={getEventIcon(event.name)}
-                              size={24}
-                              color={theme.colors.primary}
-                              style={styles.cardIcon}
-                            />
-                            <Text
-                              variant="titleMedium"
-                              style={styles.cardTitle}
-                            >
-                              {event.name}
-                            </Text>
-                          </View>
-
-                          <Text
-                            variant="bodyMedium"
-                            style={styles.cardDescription}
-                            numberOfLines={
-                              expandedId === event.name ? undefined : 2
-                            }
-                            ellipsizeMode="tail"
-                          >
-                            {stripHtmlTags(event.description_html)}
-                          </Text>
-
-                          {event.description_html.length > 120 && (
-                            <Text
-                              variant="bodySmall"
-                              onPress={() => toggleExpanded(event.name)}
-                              style={styles.readMore}
-                            >
-                              {expandedId === event.name
-                                ? 'Read less'
-                                : 'Read more'}
-                            </Text>
-                          )}
-
-                          <View style={styles.chipContainer}>
-                            <Chip
-                              icon="clock"
-                              style={styles.chip}
-                              textStyle={styles.chipText}
-                            >
-                              {event.duration} min
-                            </Chip>
-                            <Chip
-                              icon="map-marker"
-                              style={styles.chip}
-                              textStyle={styles.chipText}
-                            >
-                              {event.locations?.[0]?.location || 'In-person'}
-                            </Chip>
-                          </View>
-
-                          <Button
-                            mode="contained"
-                            icon="calendar-plus"
-                            contentStyle={styles.buttonContent}
-                            style={styles.scheduleButton}
-                            onPress={() => {
-                              setUrl(new URL(event.scheduling_url));
-                              onOpen();
-                            }}
-                          >
-                            Schedule Appointment
-                          </Button>
-                        </Card.Content>
-                      </Card>
-                    );
-                  })}
-                </View>
-              )}
+              {renderEventsContent()}
             </View>
 
-            {/* About Section */}
-            <Surface style={styles.aboutSection}>
-              <Text variant="headlineSmall" style={styles.aboutTitle}>
-                About SM Couture
-              </Text>
-              <Divider style={styles.aboutDivider} />
-              <Text style={styles.aboutText}>
-                Specializing in bespoke fashion designs and tailoring services,
-                SM Couture creates unique pieces tailored perfectly to your
-                measurements and style preferences.
-              </Text>
-              <View style={styles.featureRow}>
-                <View style={styles.featureItem}>
-                  <FontAwesome6
-                    name="star"
-                    size={24}
-                    color={theme.colors.primary}
-                  />
-                  <Text style={styles.featureText}>Expert Tailoring</Text>
-                </View>
-                <View style={styles.featureItem}>
-                  <FontAwesome6
-                    name="hand-scissors"
-                    size={24}
-                    color={theme.colors.primary}
-                  />
-                  <Text style={styles.featureText}>Custom Designs</Text>
-                </View>
-                <View style={styles.featureItem}>
-                  <FontAwesome6
-                    name="gem"
-                    size={24}
-                    color={theme.colors.primary}
-                  />
-                  <Text style={styles.featureText}>Premium Quality</Text>
-                </View>
-              </View>
-            </Surface>
+            {renderAboutSection()}
           </ScrollView>
         </View>
       )}
     </CalendlyModal>
   );
 }
+
+type FeatureItemProps = {
+  icon: string;
+  text: string;
+};
+
+const FeatureItem: React.FC<FeatureItemProps> = ({ icon, text }) => {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+
+  return (
+    <View style={styles.featureItem}>
+      <FontAwesome6 name={icon} size={24} color={theme.colors.primary} />
+      <Text style={styles.featureText}>{text}</Text>
+    </View>
+  );
+};
 
 const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
@@ -272,7 +188,7 @@ const createStyles = (theme: MD3Theme) =>
       paddingBottom: 24,
     },
     appBar: {
-      backgroundImage: 'url(../../../assets/images/app-background.png)',
+      backgroundImage: 'url(@/assets/images/app-background.png)',
       backgroundColor: theme.colors.surface,
       elevation: 0,
       borderBottomWidth: 1,

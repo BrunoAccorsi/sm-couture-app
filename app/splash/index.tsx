@@ -7,7 +7,7 @@ import { Link } from 'expo-router';
 export default function HomeScreen() {
   return (
     <ImageBackground
-      source={require('../../assets/images/background-intro.png')}
+      source={require('@/assets/images/background-intro.png')}
       style={styles.background}
     >
       <StatusBar barStyle="light-content" />

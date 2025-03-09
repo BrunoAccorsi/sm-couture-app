@@ -80,7 +80,7 @@ export default function Page() {
     <View style={styles.container}>
       <Surface style={styles.heroContainer} elevation={4}>
         <ImageBackground
-          source={require('../../assets/images/app-background-logo.png')}
+          source={require('@/assets/images/app-background-logo.png')}
           style={styles.heroImage}
           imageStyle={styles.heroImageStyle}
         />
