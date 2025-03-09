@@ -11,6 +11,7 @@ export function useAppointments() {
     queryKey: ['userAppointments'],
     url: `${apiUrl}/schedules`,
     refetchOnMount: true,
+    refetchInterval: 3000,
   });
 
   // Refresh data when user navigates between tabs
