@@ -1,13 +1,14 @@
 import React, { useRef, useEffect } from 'react';
-import { Modal, IconButton, useTheme } from 'react-native-paper';
+import { Modal, IconButton, useTheme, Portal } from 'react-native-paper';
 import { StyleSheet, View, Dimensions, Animated } from 'react-native';
 import CalendlyWidget from '../CalendlyWebView';
 
 type Props = {
   children: (onOpen: () => void) => React.ReactNode;
+  onClose?: () => void;
 };
 
-const CalendlyModal = ({ children }: Props) => {
+const CalendlyModal = ({ children, onClose }: Props) => {
   const [visible, setVisible] = React.useState(false);
   const animation = useRef(new Animated.Value(0)).current;
 
@@ -26,6 +27,13 @@ const CalendlyModal = ({ children }: Props) => {
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
+  const onDismiss = () => {
+    hideModal();
+    if (onClose) {
+      onClose();
+    }
+  };
+
   // Animation transformations
   const translateY = animation.interpolate({
     inputRange: [0, 1],
@@ -42,7 +50,7 @@ const CalendlyModal = ({ children }: Props) => {
       {children(showModal)}
       <Modal
         visible={visible}
-        onDismiss={hideModal}
+        onDismiss={onDismiss}
         contentContainerStyle={styles.modalContainer}
       >
         <Animated.View

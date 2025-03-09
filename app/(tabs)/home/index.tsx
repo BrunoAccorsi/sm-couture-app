@@ -1,37 +1,29 @@
-import { useCalendlyQuery } from '@/app/hooks/useCalendlyQuery';
-import { FontAwesome6 } from '@expo/vector-icons';
-import * as Linking from 'expo-linking';
-import { useRouter } from 'expo-router';
-import React, { useState, useRef } from 'react';
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  ImageBackground,
-  Dimensions,
-  Image,
-  StatusBar,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  useColorScheme,
-} from 'react-native';
-import {
-  Appbar,
-  Button,
-  Card,
-  MD3Theme,
-  Text,
-  useTheme,
-  Surface,
-  ActivityIndicator,
-  Chip,
-  Divider,
-} from 'react-native-paper';
-import { z } from 'zod';
-import { LinearGradient } from 'expo-linear-gradient';
-import { stripHtmlTags } from '@/app/utils/utils';
 import CalendlyModal from '@/app/components/CalendlyModal';
 import { useCalendly } from '@/app/context/CalendlyContext';
+import { useCalendlyQuery } from '@/app/hooks/useCalendlyQuery';
+import { stripHtmlTags } from '@/app/utils/utils';
+import { FontAwesome6 } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useState } from 'react';
+import {
+  ImageBackground,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  View,
+} from 'react-native';
+import {
+  ActivityIndicator,
+  Button,
+  Card,
+  Chip,
+  Divider,
+  MD3Theme,
+  Surface,
+  Text,
+  useTheme,
+} from 'react-native-paper';
+import { z } from 'zod';
 
 const EventsSchema = z.object({
   collection: z.array(

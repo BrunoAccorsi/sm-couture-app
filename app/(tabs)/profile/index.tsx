@@ -6,10 +6,10 @@ import { useClerk, useUser } from '@clerk/clerk-expo';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Linking from 'expo-linking';
-import { useRouter } from 'expo-router';
+import { useRouter, useSegments } from 'expo-router';
 import moment from 'moment';
-import React from 'react';
-import { ImageBackground, ScrollView, StyleSheet, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { FlatList, ImageBackground, StyleSheet, View } from 'react-native';
 import {
   ActivityIndicator,
   Avatar,
@@ -22,12 +22,12 @@ import {
   Text,
   useTheme,
 } from 'react-native-paper';
-import { set, z } from 'zod';
+import { z } from 'zod';
 
 const scheduleSchema = z.array(
   z.object({
     id: z.number(),
-    email: z.string(),
+    userId: z.string(),
     event: z.string(),
     cancel_url: z.string(),
     reschedule_url: z.string(),
@@ -41,7 +41,6 @@ export type Schedule = z.infer<typeof scheduleSchema>;
 
 export default function ProfileScreen() {
   const { setUrl } = useCalendly();
-  const router = useRouter();
   const theme = useTheme();
   const styles = createStyles(theme);
   const { signOut } = useClerk();
@@ -59,18 +58,107 @@ export default function ProfileScreen() {
 
   const apiUrl = process.env.EXPO_PUBLIC_API_URL!;
 
-  const { data, isLoading } = useClerkQuery({
+  const { data, isLoading, refetch } = useClerkQuery({
     queryKey: ['test'],
     url: `${apiUrl}/schedules`,
-    config: {
-      params: { email: user?.primaryEmailAddress?.emailAddress },
-    },
-    refetchOnWindowFocus: true,
     refetchOnMount: true,
   });
 
   const parsedData = scheduleSchema.safeParse(data?.data);
   const schedules = parsedData.success ? parsedData.data : [];
+
+  const segments = useSegments(); // Get route segments
+
+  useEffect(() => {
+    refetch(); // Call refetch on tab change
+  }, [segments]);
+
+  const renderAppointmentItem = ({ item: schedule }) => (
+    <CalendlyModal onClose={refetch}>
+      {(onOpen) => (
+        <Card key={schedule.id} style={styles.appointmentCard} mode="outlined">
+          <Card.Content>
+            <View style={styles.appointmentHeader}>
+              <FontAwesome6
+                name="calendar-check"
+                size={20}
+                color={theme.colors.primary}
+              />
+              <Text variant="titleMedium" style={styles.eventTitle}>
+                {schedule.event}
+              </Text>
+            </View>
+            <Divider style={styles.divider} />
+            <View style={styles.appointmentDetails}>
+              <Text variant="bodyMedium" style={styles.detailLabel}>
+                Date:
+              </Text>
+              <Text variant="bodyMedium" style={styles.dateText}>
+                {moment(schedule.start_time).format(
+                  'MMMM Do, YYYY [at] h:mm A'
+                )}
+              </Text>
+            </View>
+            <View style={styles.appointmentStatus}>
+              <FontAwesome6
+                name={
+                  schedule.status === 'active' ? 'check-circle' : 'circle-xmark'
+                }
+                size={16}
+                color={
+                  schedule.status === 'active'
+                    ? theme.colors.primary
+                    : theme.colors.error
+                }
+              />
+              <Text
+                variant="bodySmall"
+                style={[
+                  styles.statusText,
+                  {
+                    color:
+                      schedule.status === 'active'
+                        ? theme.colors.primary
+                        : theme.colors.error,
+                  },
+                ]}
+              >
+                {schedule.status === 'active' ? 'Confirmed' : 'Cancelled'}
+              </Text>
+            </View>
+            {schedule.status === 'active' && (
+              <View style={styles.appointmentActions}>
+                <Button
+                  mode="outlined"
+                  icon="calendar-clock"
+                  contentStyle={styles.buttonContent}
+                  style={styles.rescheduleButton}
+                  onPress={() => {
+                    setUrl(schedule.reschedule_url);
+                    onOpen();
+                  }}
+                >
+                  Reschedule
+                </Button>
+                <Button
+                  mode="contained-tonal"
+                  icon="calendar-remove"
+                  contentStyle={styles.buttonContent}
+                  style={styles.cancelButton}
+                  onPress={() => {
+                    setUrl(schedule.cancel_url);
+                    onOpen();
+                  }}
+                >
+                  Cancel
+                </Button>
+              </View>
+            )}
+          </Card.Content>
+        </Card>
+      )}
+    </CalendlyModal>
+  );
 
   if (!user) {
     return (
@@ -81,209 +169,116 @@ export default function ProfileScreen() {
   }
 
   return (
-    <CalendlyModal>
-      {(onOpen) => (
-        <View style={styles.container}>
-          <Surface style={styles.heroContainer} elevation={4}>
-            <ImageBackground
-              source={require('../../../assets/images/app-background.png')}
-              style={styles.heroImage}
-              imageStyle={styles.heroImageStyle}
-            >
-              <LinearGradient
-                colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.7)']}
-                style={styles.heroOverlay}
-              >
-                <View style={styles.heroContent}>
-                  <Avatar.Image size={100} source={{ uri: user.imageUrl }} />
-                  <Text variant="headlineMedium" style={styles.heroTitle}>
-                    {user.fullName}
+    <View style={styles.container}>
+      <Surface style={styles.heroContainer} elevation={4}>
+        <ImageBackground
+          source={require('../../../assets/images/app-background.png')}
+          style={styles.heroImage}
+          imageStyle={styles.heroImageStyle}
+        >
+          <LinearGradient
+            colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.7)']}
+            style={styles.heroOverlay}
+          >
+            <View style={styles.heroContent}>
+              <Avatar.Image size={100} source={{ uri: user.imageUrl }} />
+              <Text variant="headlineMedium" style={styles.heroTitle}>
+                {user.fullName}
+              </Text>
+              <Text variant="bodyLarge" style={styles.heroSubtitle}>
+                {user.primaryEmailAddress?.emailAddress}
+              </Text>
+            </View>
+          </LinearGradient>
+        </ImageBackground>
+      </Surface>
+
+      <View style={[styles.scrollView, { flex: 1 }]}>
+        <View style={styles.contentContainer}>
+          <View style={styles.infoCard}>
+            <View style={styles.infoRow}>
+              <FontAwesome6
+                name="calendar"
+                size={16}
+                color={theme.colors.primary}
+              />
+              <Text variant="titleMedium" style={styles.infoLabel}>
+                Member since
+              </Text>
+              <Text variant="bodyLarge" style={styles.infoValue}>
+                {user.createdAt
+                  ? new Date(user.createdAt).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })
+                  : 'N/A'}
+              </Text>
+            </View>
+            <Divider style={styles.divider} />
+            <View style={styles.infoRow}>
+              <FontAwesome6
+                name={isThemeDark ? 'moon' : 'sun'}
+                size={16}
+                color={theme.colors.primary}
+              />
+              <Text variant="titleMedium" style={styles.infoLabel}>
+                Dark Mode
+              </Text>
+              <Switch value={isThemeDark} onValueChange={toggleTheme} />
+            </View>
+          </View>
+
+          <Button
+            mode="contained"
+            icon="logout"
+            onPress={handleSignOut}
+            style={styles.signOutButton}
+            contentStyle={styles.signOutButtonContent}
+            labelStyle={{ color: theme.colors.onError }}
+          >
+            Sign Out
+          </Button>
+
+          {isLoading ? (
+            <ActivityIndicator style={styles.loadingIndicator} />
+          ) : (
+            <>
+              {schedules.length > 0 ? (
+                <>
+                  <Text variant="titleLarge" style={styles.sectionTitle}>
+                    Your Appointments
                   </Text>
-                  <Text variant="bodyLarge" style={styles.heroSubtitle}>
-                    {user.primaryEmailAddress?.emailAddress}
+                  <FlatList
+                    data={schedules}
+                    renderItem={renderAppointmentItem}
+                    keyExtractor={(item) => item.id.toString()}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.listContent}
+                    onRefresh={refetch}
+                    refreshing={isLoading}
+                  />
+                </>
+              ) : (
+                <View style={styles.emptyStateCard}>
+                  <FontAwesome6
+                    name="calendar-xmark"
+                    size={48}
+                    color={theme.colors.onSurfaceDisabled}
+                  />
+                  <Text variant="titleMedium" style={styles.emptyStateText}>
+                    No appointments scheduled
+                  </Text>
+                  <Text variant="bodyMedium" style={styles.emptyStateSubtext}>
+                    Your upcoming appointments will appear here
                   </Text>
                 </View>
-              </LinearGradient>
-            </ImageBackground>
-          </Surface>
-
-          <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollViewContent}
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.infoCard}>
-              <View style={styles.infoRow}>
-                <FontAwesome6
-                  name="calendar"
-                  size={16}
-                  color={theme.colors.primary}
-                />
-                <Text variant="titleMedium" style={styles.infoLabel}>
-                  Member since
-                </Text>
-                <Text variant="bodyLarge" style={styles.infoValue}>
-                  {user.createdAt
-                    ? new Date(user.createdAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })
-                    : 'N/A'}
-                </Text>
-              </View>
-              <Divider style={styles.divider} />
-              <View style={styles.infoRow}>
-                <FontAwesome6
-                  name={isThemeDark ? 'moon' : 'sun'}
-                  size={16}
-                  color={theme.colors.primary}
-                />
-                <Text variant="titleMedium" style={styles.infoLabel}>
-                  Dark Mode
-                </Text>
-                <Switch value={isThemeDark} onValueChange={toggleTheme} />
-              </View>
-            </View>
-
-            <Button
-              mode="contained"
-              icon="logout"
-              onPress={handleSignOut}
-              style={styles.signOutButton}
-              contentStyle={styles.signOutButtonContent}
-              labelStyle={{ color: theme.colors.onError }}
-            >
-              Sign Out
-            </Button>
-
-            {isLoading ? (
-              <ActivityIndicator style={styles.loadingIndicator} />
-            ) : (
-              <>
-                {schedules.length > 0 ? (
-                  <>
-                    <Text variant="titleLarge" style={styles.sectionTitle}>
-                      Your Appointments
-                    </Text>
-                    {schedules.map((schedule) => (
-                      <Card
-                        key={schedule.id}
-                        style={styles.appointmentCard}
-                        mode="outlined"
-                      >
-                        <Card.Content>
-                          <View style={styles.appointmentHeader}>
-                            <FontAwesome6
-                              name="calendar-check"
-                              size={20}
-                              color={theme.colors.primary}
-                            />
-                            <Text
-                              variant="titleMedium"
-                              style={styles.eventTitle}
-                            >
-                              {schedule.event}
-                            </Text>
-                          </View>
-                          <Divider style={styles.divider} />
-                          <View style={styles.appointmentDetails}>
-                            <Text
-                              variant="bodyMedium"
-                              style={styles.detailLabel}
-                            >
-                              Date:
-                            </Text>
-                            <Text variant="bodyMedium" style={styles.dateText}>
-                              {moment(schedule.start_time).format(
-                                'MMMM Do, YYYY [at] h:mm A'
-                              )}
-                            </Text>
-                          </View>
-                          <View style={styles.appointmentStatus}>
-                            <FontAwesome6
-                              name={
-                                schedule.status === 'active'
-                                  ? 'check-circle'
-                                  : 'circle-xmark'
-                              }
-                              size={16}
-                              color={
-                                schedule.status === 'active'
-                                  ? theme.colors.primary
-                                  : theme.colors.error
-                              }
-                            />
-                            <Text
-                              variant="bodySmall"
-                              style={[
-                                styles.statusText,
-                                {
-                                  color:
-                                    schedule.status === 'active'
-                                      ? theme.colors.primary
-                                      : theme.colors.error,
-                                },
-                              ]}
-                            >
-                              {schedule.status === 'active'
-                                ? 'Confirmed'
-                                : 'Cancelled'}
-                            </Text>
-                          </View>
-                          {schedule.status === 'active' && (
-                            <View style={styles.appointmentActions}>
-                              <Button
-                                mode="outlined"
-                                icon="calendar-clock"
-                                contentStyle={styles.buttonContent}
-                                style={styles.rescheduleButton}
-                                onPress={() => {
-                                  setUrl(schedule.reschedule_url);
-                                  onOpen();
-                                }}
-                              >
-                                Reschedule
-                              </Button>
-                              <Button
-                                mode="contained-tonal"
-                                icon="calendar-remove"
-                                contentStyle={styles.buttonContent}
-                                style={styles.cancelButton}
-                                onPress={() => {
-                                  setUrl(schedule.cancel_url);
-                                  onOpen();
-                                }}
-                              >
-                                Cancel
-                              </Button>
-                            </View>
-                          )}
-                        </Card.Content>
-                      </Card>
-                    ))}
-                  </>
-                ) : (
-                  <View style={styles.emptyStateCard}>
-                    <FontAwesome6
-                      name="calendar-xmark"
-                      size={48}
-                      color={theme.colors.onSurfaceDisabled}
-                    />
-                    <Text variant="titleMedium" style={styles.emptyStateText}>
-                      No appointments scheduled
-                    </Text>
-                    <Text variant="bodyMedium" style={styles.emptyStateSubtext}>
-                      Your upcoming appointments will appear here
-                    </Text>
-                  </View>
-                )}
-              </>
-            )}
-          </ScrollView>
+              )}
+            </>
+          )}
         </View>
-      )}
-    </CalendlyModal>
+      </View>
+    </View>
   );
 }
 
@@ -303,8 +298,12 @@ const createStyles = (theme: MD3Theme) =>
       marginTop: -64,
       backgroundColor: theme.colors.background,
     },
-    scrollViewContent: {
+    contentContainer: {
       padding: 32,
+      flex: 1,
+    },
+    listContent: {
+      paddingBottom: 20,
     },
     appBar: {
       backgroundColor: theme.colors.surface,

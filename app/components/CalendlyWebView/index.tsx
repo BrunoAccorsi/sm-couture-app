@@ -30,7 +30,7 @@ const CalendlyWidget = ({}: Props) => {
 
       <WebView
         source={{
-          uri: `${url}?email=${user.primaryEmailAddress?.emailAddress}&name=${user.fullName}`,
+          uri: `${url}?email=${user.primaryEmailAddress?.emailAddress}&name=${user.fullName}&salesforce_uuid=${user.id}`,
         }}
         opaque={false}
         style={{ opacity: isLoading ? 0 : 1, backgroundColor: 'transparent' }}
