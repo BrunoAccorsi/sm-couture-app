@@ -1,12 +1,12 @@
 import { useUser } from '@clerk/clerk-expo';
 import { Redirect } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { MD3Theme, useTheme } from 'react-native-paper';
 import { WebView } from 'react-native-webview';
 
 type Props = {
-  customUrl: string | null;
+  customUrl: URL | null;
 };
 
 const CalendlyWidget = ({ customUrl }: Props) => {
@@ -15,6 +15,17 @@ const CalendlyWidget = ({ customUrl }: Props) => {
   const theme = useTheme();
   const styles = createStyles(theme);
   const { user } = useUser();
+  const webViewRef = useRef<WebView>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Clear timeout when component unmounts
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   if (!user) {
     return <Redirect href={'/(auth)'} />;
@@ -30,17 +41,28 @@ const CalendlyWidget = ({ customUrl }: Props) => {
     user.fullName || ''
   )}&salesforce_uuid=${encodeURIComponent(user.id)}`;
 
+  // JavaScript to inject that will check if Calendly is fully loaded
+  const injectedJavaScript = `
+    (function() {
+      function checkCalendlyLoaded() {
+        // Check for Calendly booking container which indicates the UI is ready
+        if (document.querySelector('div[data-container="booking-container"]')) {
+          window.ReactNativeWebView.postMessage('calendly_loaded');
+          return;
+        }
+        setTimeout(checkCalendlyLoaded, 200);
+      }
+      checkCalendlyLoaded();
+      true;
+    })();
+  `;
+
   return (
     <View style={styles.container}>
       {/* Show loading screen */}
       {isLoading && (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text
-            style={[styles.loadingText, { color: theme.colors.onBackground }]}
-          >
-            Loading Calendly...
-          </Text>
         </View>
       )}
 
@@ -50,12 +72,19 @@ const CalendlyWidget = ({ customUrl }: Props) => {
         </View>
       ) : (
         <WebView
+          ref={webViewRef}
           source={{ uri: calendlyUrl }}
           style={styles.webView}
           javaScriptEnabled={true}
           domStorageEnabled={true}
-          onLoadEnd={() => {
-            setIsLoading(false);
+          injectedJavaScript={injectedJavaScript}
+          onMessage={(event) => {
+            if (event.nativeEvent.data === 'calendly_loaded') {
+              if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+              }
+              setIsLoading(false);
+            }
           }}
           onError={(e) => {
             setError(e.nativeEvent.description || 'Failed to load');
@@ -80,7 +109,7 @@ const createStyles = (theme: MD3Theme) =>
       flex: 1,
       width: '100%',
       height: '100%',
-      backgroundColor: theme.colors.background,
+      backgroundColor: 'white',
     },
     webView: {
       flex: 1,
@@ -90,7 +119,7 @@ const createStyles = (theme: MD3Theme) =>
     },
     loadingContainer: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: theme.colors.background,
+      backgroundColor: 'white',
       justifyContent: 'center',
       alignItems: 'center',
       zIndex: 10,

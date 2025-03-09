@@ -1,8 +1,14 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { Modal, IconButton, useTheme, Portal } from 'react-native-paper';
-import { StyleSheet, View, Dimensions, Animated, Text } from 'react-native';
-import CalendlyWidget from '../CalendlyWebView';
 import { useCalendly } from '@/app/context/CalendlyContext';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Dimensions, StyleSheet, View } from 'react-native';
+import {
+  IconButton,
+  MD3Theme,
+  Modal,
+  Portal,
+  useTheme,
+} from 'react-native-paper';
+import CalendlyWidget from '../CalendlyWebView';
 
 type Props = {
   children: (onOpen: () => void) => React.ReactNode;
@@ -13,6 +19,8 @@ const CalendlyModal = ({ children, onClose }: Props) => {
   const [visible, setVisible] = React.useState(false);
   const animation = useRef(new Animated.Value(0)).current;
   const { url } = useCalendly();
+  const theme = useTheme();
+  const styles = createStyles(theme);
 
   useEffect(() => {
     if (visible) {
@@ -87,47 +95,48 @@ const CalendlyModal = ({ children, onClose }: Props) => {
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const styles = StyleSheet.create({
-  modalContainer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    width: windowWidth,
-    height: windowHeight,
-    margin: 0,
-    padding: 0,
-    borderRadius: 32,
-    overflow: 'hidden',
-  },
-  animatedContent: {
-    flex: 1,
-    backgroundColor: 'white',
-    borderRadius: 32,
-    overflow: 'hidden',
-    paddingBottom: 128,
-  },
-  closeButtonContainer: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    zIndex: 10,
-  },
-  closeButton: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  widgetContainer: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'white',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+const createStyles = (theme: MD3Theme) =>
+  StyleSheet.create({
+    modalContainer: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      width: windowWidth,
+      height: windowHeight,
+      margin: 0,
+      padding: 0,
+      borderRadius: 32,
+      overflow: 'hidden',
+    },
+    animatedContent: {
+      flex: 1,
+      backgroundColor: 'white',
+      borderRadius: 32,
+      overflow: 'hidden',
+      paddingBottom: 128,
+    },
+    closeButtonContainer: {
+      position: 'absolute',
+      top: 20,
+      right: 20,
+      zIndex: 10,
+    },
+    closeButton: {
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    widgetContainer: {
+      flex: 1,
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'white',
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  });
 
 export default CalendlyModal;
