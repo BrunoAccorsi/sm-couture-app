@@ -1,7 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Modal, IconButton, useTheme, Portal } from 'react-native-paper';
-import { StyleSheet, View, Dimensions, Animated } from 'react-native';
+import { StyleSheet, View, Dimensions, Animated, Text } from 'react-native';
 import CalendlyWidget from '../CalendlyWebView';
+import { useCalendly } from '@/app/context/CalendlyContext';
 
 type Props = {
   children: (onOpen: () => void) => React.ReactNode;
@@ -11,6 +12,7 @@ type Props = {
 const CalendlyModal = ({ children, onClose }: Props) => {
   const [visible, setVisible] = React.useState(false);
   const animation = useRef(new Animated.Value(0)).current;
+  const { url } = useCalendly();
 
   useEffect(() => {
     if (visible) {
@@ -48,34 +50,36 @@ const CalendlyModal = ({ children, onClose }: Props) => {
   return (
     <>
       {children(showModal)}
-      <Modal
-        visible={visible}
-        onDismiss={onDismiss}
-        contentContainerStyle={styles.modalContainer}
-      >
-        <Animated.View
-          style={[
-            styles.animatedContent,
-            {
-              opacity: opacity,
-              transform: [{ translateY: translateY }],
-            },
-          ]}
+      <Portal>
+        <Modal
+          visible={visible}
+          onDismiss={onDismiss}
+          contentContainerStyle={styles.modalContainer}
         >
-          <View style={styles.closeButtonContainer}>
-            <IconButton
-              icon="close"
-              size={24}
-              onPress={hideModal}
-              iconColor="white"
-              style={styles.closeButton}
-            />
-          </View>
-          <View style={styles.widgetContainer}>
-            <CalendlyWidget />
-          </View>
-        </Animated.View>
-      </Modal>
+          <Animated.View
+            style={[
+              styles.animatedContent,
+              {
+                opacity: opacity,
+                transform: [{ translateY: translateY }],
+              },
+            ]}
+          >
+            <View style={styles.closeButtonContainer}>
+              <IconButton
+                icon="close"
+                size={24}
+                onPress={hideModal}
+                iconColor="white"
+                style={styles.closeButton}
+              />
+            </View>
+            <View style={styles.widgetContainer}>
+              <CalendlyWidget customUrl={url} />
+            </View>
+          </Animated.View>
+        </Modal>
+      </Portal>
     </>
   );
 };
@@ -117,6 +121,12 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
+    backgroundColor: 'white',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

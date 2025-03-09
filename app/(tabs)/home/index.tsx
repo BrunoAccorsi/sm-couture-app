@@ -197,7 +197,7 @@ export default function HomeScreen() {
                             contentStyle={styles.buttonContent}
                             style={styles.scheduleButton}
                             onPress={() => {
-                              setUrl(event.scheduling_url);
+                              setUrl(new URL(event.scheduling_url));
                               onOpen();
                             }}
                           >

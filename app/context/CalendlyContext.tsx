@@ -1,8 +1,8 @@
 import React from 'react';
 
 type CalendlyContext = {
-  setUrl: (url: string) => void;
-  url: string | null;
+  setUrl: (url: URL) => void;
+  url: URL | null;
 };
 
 export const CalendlyContext = React.createContext<CalendlyContext>({
@@ -15,7 +15,7 @@ type Props = {
 };
 
 export const CalendlyProvider = ({ children }: Props) => {
-  const [url, setUrl] = React.useState<string | null>(null);
+  const [url, setUrl] = React.useState<URL | null>(null);
 
   const contextValue = React.useMemo(
     () => ({
