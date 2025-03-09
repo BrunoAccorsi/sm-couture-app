@@ -54,7 +54,7 @@ export default function HomeScreen() {
       event={item}
       isExpanded={expandedId === item.name}
       onToggleExpand={() => toggleExpanded(item.name)}
-      onSchedule={handleScheduleAppointment}
+      onSchedule={(url) => handleScheduleAppointment(url)}
     />
   );
 
@@ -74,7 +74,7 @@ export default function HomeScreen() {
       <View>
         <FlatList
           data={events}
-          renderItem={renderEvent}
+          renderItem={(props) => renderEvent(props)}
           keyExtractor={(item) => item.name}
           contentContainerStyle={styles.eventsContainer}
           showsVerticalScrollIndicator={false}
@@ -128,30 +128,26 @@ export default function HomeScreen() {
   );
 
   return (
-    <CalendlyModal>
-      {(onOpen) => (
-        <View style={styles.container}>
-          <StatusBar barStyle="light-content" />
-          {renderHeroSection()}
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
+      {renderHeroSection()}
 
-          <ScrollView
-            style={styles.scrollView}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
-            scrollEventThrottle={16}
-          >
-            <View style={styles.content}>
-              <Text variant="headlineSmall" style={styles.sectionTitle}>
-                Our Services
-              </Text>
-              {renderEventsContent()}
-            </View>
-
-            {renderAboutSection()}
-          </ScrollView>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+        scrollEventThrottle={16}
+      >
+        <View style={styles.content}>
+          <Text variant="headlineSmall" style={styles.sectionTitle}>
+            Our Services
+          </Text>
+          {renderEventsContent()}
         </View>
-      )}
-    </CalendlyModal>
+
+        {renderAboutSection()}
+      </ScrollView>
+    </View>
   );
 }
 

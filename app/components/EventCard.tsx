@@ -11,6 +11,7 @@ import {
 import { FontAwesome6 } from '@expo/vector-icons';
 import { EventType } from '@/app/types/event.types';
 import { stripHtmlTags } from '@/app/utils/utils';
+import CalendlyModal from './CalendlyModal';
 
 type EventCardProps = {
   event: EventType;
@@ -86,16 +87,22 @@ const EventCard: React.FC<EventCardProps> = ({
             {event.locations?.[0]?.location || 'In-person'}
           </Chip>
         </View>
-
-        <Button
-          mode="contained"
-          icon="calendar-plus"
-          contentStyle={styles.buttonContent}
-          style={styles.scheduleButton}
-          onPress={() => onSchedule(event.scheduling_url)}
-        >
-          Schedule Appointment
-        </Button>
+        <CalendlyModal>
+          {(onOpen) => (
+            <Button
+              mode="contained"
+              icon="calendar-plus"
+              contentStyle={styles.buttonContent}
+              style={styles.scheduleButton}
+              onPress={() => {
+                onSchedule(event.scheduling_url);
+                onOpen();
+              }}
+            >
+              Schedule Appointment
+            </Button>
+          )}
+        </CalendlyModal>
       </Card.Content>
     </Card>
   );
