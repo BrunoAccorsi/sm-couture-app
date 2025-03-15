@@ -1,11 +1,9 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { useTheme } from 'react-native-paper';
-import { Ionicons } from '@expo/vector-icons';
-import { usePreferences } from '@/app/context/preferencesContext';
 
 export default function TabsLayout() {
   const theme = useTheme();
-  const { isThemeDark } = usePreferences();
 
   return (
     <Tabs

@@ -32,7 +32,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
 
   return (
     <CalendlyModal onClose={onUpdate}>
-      {(onOpen) => (
+      {onOpen => (
         <Card style={styles.appointmentCard} mode="outlined">
           <Card.Content>
             <View style={styles.appointmentHeader}>

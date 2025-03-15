@@ -78,7 +78,7 @@ const CalendlyWidget = ({ customUrl }: Props) => {
           javaScriptEnabled={true}
           domStorageEnabled={true}
           injectedJavaScript={injectedJavaScript}
-          onMessage={(event) => {
+          onMessage={event => {
             if (event.nativeEvent.data === 'calendly_loaded') {
               if (timeoutRef.current) {
                 clearTimeout(timeoutRef.current);
@@ -86,12 +86,12 @@ const CalendlyWidget = ({ customUrl }: Props) => {
               setIsLoading(false);
             }
           }}
-          onError={(e) => {
+          onError={e => {
             setError(e.nativeEvent.description || 'Failed to load');
             setIsLoading(false);
           }}
           startInLoadingState={true}
-          onHttpError={(e) => {
+          onHttpError={e => {
             if (e.nativeEvent.statusCode >= 400) {
               setError(`HTTP error ${e.nativeEvent.statusCode}`);
               setIsLoading(false);

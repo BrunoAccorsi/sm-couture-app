@@ -42,7 +42,7 @@ export const AppointmentList: React.FC<AppointmentListProps> = ({
         renderItem={({ item }) => (
           <AppointmentCard schedule={item} onUpdate={onRefresh} />
         )}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={item => item.id.toString()}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
         onRefresh={onRefresh}

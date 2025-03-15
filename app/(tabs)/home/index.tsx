@@ -54,7 +54,7 @@ export default function HomeScreen() {
       event={item}
       isExpanded={expandedId === item.name}
       onToggleExpand={() => toggleExpanded(item.name)}
-      onSchedule={(url) => handleScheduleAppointment(url)}
+      onSchedule={url => handleScheduleAppointment(url)}
     />
   );
 
@@ -74,8 +74,8 @@ export default function HomeScreen() {
       <View>
         <FlatList
           data={events}
-          renderItem={(props) => renderEvent(props)}
-          keyExtractor={(item) => item.name}
+          renderItem={props => renderEvent(props)}
+          keyExtractor={item => item.name}
           contentContainerStyle={styles.eventsContainer}
           showsVerticalScrollIndicator={false}
           scrollEnabled={false}

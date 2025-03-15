@@ -88,7 +88,7 @@ const EventCard: React.FC<EventCardProps> = ({
           </Chip>
         </View>
         <CalendlyModal>
-          {(onOpen) => (
+          {onOpen => (
             <Button
               mode="contained"
               icon="calendar-plus"
