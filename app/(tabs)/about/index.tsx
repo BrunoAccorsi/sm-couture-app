@@ -43,6 +43,7 @@ export default function AboutScreen() {
             key={index}
             imageUrl={section.imageUrl}
             text={section.text}
+            title={section.title}
           />
         ))}
 
