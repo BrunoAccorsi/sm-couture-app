@@ -80,10 +80,16 @@ export default function Page() {
     <View style={styles.container}>
       <Surface style={styles.heroContainer} elevation={4}>
         <ImageBackground
-          source={require('@/assets/images/app-background-logo.png')}
+          source={require('@/assets/images/app-background.png')}
           style={styles.heroImage}
           imageStyle={styles.heroImageStyle}
-        />
+        >
+          <Image
+            source={require('@/assets/images/Sm-couture-logo-white.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </ImageBackground>
       </Surface>
       <View style={styles.content}>
         <SButton
@@ -115,6 +121,8 @@ const createStyles = (theme: MD3Theme) =>
       width: 200,
       height: 200,
       alignSelf: 'center',
+      marginBottom: 'auto',
+      marginTop: 'auto',
     },
     heroContainer: {
       height: 500,
