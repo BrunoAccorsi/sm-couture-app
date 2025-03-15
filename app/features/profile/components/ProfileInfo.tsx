@@ -74,7 +74,7 @@ export const ProfileInfo: React.FC<ProfileInfoProps> = ({ createdAt }) => {
         onPress={handleSignOut}
         style={styles.signOutButton}
         contentStyle={styles.signOutButtonContent}
-        labelStyle={{ color: theme.colors.onError }}
+        labelStyle={{ color: theme.colors.onSurface }}
       >
         Sign Out
       </Button>
