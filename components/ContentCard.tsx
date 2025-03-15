@@ -1,9 +1,9 @@
 import React from 'react';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View, Image, ImageSourcePropType } from 'react-native';
 import { Surface, Text, MD3Theme, useTheme } from 'react-native-paper';
 
 interface ContentCardProps {
-  imageUrl: string;
+  imageUrl: ImageSourcePropType;
   text: string;
 }
 
@@ -13,11 +13,7 @@ export const ContentCard = ({ imageUrl, text }: ContentCardProps) => {
 
   return (
     <Surface style={styles.contentSection} elevation={2}>
-      <Image
-        source={{ uri: imageUrl }}
-        style={styles.heroImage}
-        resizeMode="cover"
-      />
+      <Image source={imageUrl} style={styles.heroImage} resizeMode="cover" />
       <View style={styles.textContainer}>
         <Text style={styles.sectionText}>{text}</Text>
       </View>

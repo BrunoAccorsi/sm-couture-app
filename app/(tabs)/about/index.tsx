@@ -1,9 +1,24 @@
 import { HeroSection } from '@/components/HeroSection';
 import { ContentCard } from '@/components/ContentCard';
+import { ImageCarousel } from '@/components/ImageCarousel';
 import React from 'react';
-import { ScrollView, StatusBar, StyleSheet, View } from 'react-native';
+import {
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  View,
+  Dimensions,
+} from 'react-native';
 import { MD3Theme, useTheme } from 'react-native-paper';
 import { aboutContent } from './content';
+
+const carouselImages = [
+  require('@/assets/images/app-background.png'),
+  require('@/assets/images/app-background.png'),
+  require('@/assets/images/app-background.png'),
+  require('@/assets/images/app-background.png'),
+  require('@/assets/images/app-background.png'),
+];
 
 export default function AboutScreen() {
   const theme = useTheme();
@@ -30,6 +45,8 @@ export default function AboutScreen() {
             text={section.text}
           />
         ))}
+
+        <ImageCarousel title="Gallery" images={carouselImages} />
       </ScrollView>
     </View>
   );
@@ -99,5 +116,34 @@ const createStyles = (theme: MD3Theme) =>
     sectionText: {
       color: theme.colors.onSurface,
       lineHeight: 22,
+    },
+    carouselSection: {
+      marginTop: 24,
+      marginBottom: 16,
+    },
+    carouselTitle: {
+      fontSize: 22,
+      fontWeight: 'bold',
+      marginBottom: 16,
+      color: theme.colors.onBackground,
+    },
+    carouselContainer: {
+      paddingRight: 16,
+    },
+    carouselImageWrapper: {
+      marginRight: 12,
+      borderRadius: 8,
+      overflow: 'hidden',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    carouselImage: {
+      width: Dimensions.get('window').width * 0.75,
+      height: 200,
+      borderRadius: 8,
+      resizeMode: 'cover',
     },
   });

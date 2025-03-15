@@ -8,7 +8,7 @@ interface HeroSectionProps {
   title: string;
   subtitle: string;
   height?: number;
-  gradientColors?: string[];
+  gradientColors?: readonly [string, string, ...string[]];
 }
 
 export const HeroSection = ({
@@ -16,7 +16,7 @@ export const HeroSection = ({
   title,
   subtitle,
   height = 280,
-  gradientColors = ['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.7)'],
+  gradientColors = ['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.7)'] as const,
 }: HeroSectionProps) => {
   const theme = useTheme();
   const styles = createStyles(theme, height);
