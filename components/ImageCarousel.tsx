@@ -1,12 +1,12 @@
 import React from 'react';
 import {
-  ScrollView,
   View,
   Image,
   Text,
   StyleSheet,
   Dimensions,
   ImageSourcePropType,
+  FlatList,
 } from 'react-native';
 import { MD3Theme, useTheme } from 'react-native-paper';
 
@@ -21,25 +21,34 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({
   title,
   images,
   imageWidth = Dimensions.get('window').width * 0.75,
-  imageHeight = 200,
+  imageHeight = imageWidth,
 }) => {
   const theme = useTheme();
   const styles = createStyles(theme, imageWidth, imageHeight);
 
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: ImageSourcePropType;
+    index: number;
+  }) => (
+    <View key={index} style={styles.carouselImageWrapper}>
+      <Image source={item} style={styles.carouselImage} />
+    </View>
+  );
+
   return (
     <View style={styles.carouselSection}>
       <Text style={styles.carouselTitle}>{title}</Text>
-      <ScrollView
+      <FlatList
+        data={images}
+        renderItem={renderItem}
+        keyExtractor={(_, index) => index.toString()}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.carouselContainer}
-      >
-        {images.map((image, index) => (
-          <View key={index} style={styles.carouselImageWrapper}>
-            <Image source={image} style={styles.carouselImage} />
-          </View>
-        ))}
-      </ScrollView>
+      />
     </View>
   );
 };
