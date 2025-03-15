@@ -144,7 +144,6 @@ export default function HomeScreen() {
           </Text>
           {renderEventsContent()}
         </View>
-
         {renderAboutSection()}
       </ScrollView>
     </View>
