@@ -96,11 +96,13 @@ export default function Page() {
           icon="logo-google"
           title="Sign in with Google"
           onPress={onGoogleSignIn}
+          variant="google"
         />
         <SButton
           icon="logo-apple"
           title="Sign in with Apple"
           onPress={onAppleSignIn}
+          variant="apple"
         />
       </View>
     </View>

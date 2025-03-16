@@ -1,40 +1,47 @@
 import React from 'react';
-import {
-  TouchableOpacity,
-  TouchableOpacityProps,
-  Text,
-  ActivityIndicator,
-} from 'react-native';
+import { TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { styles } from './styles';
+import { useTheme } from 'react-native-paper';
+import { createStyles } from './styles';
 
-interface ButtonProps extends TouchableOpacityProps {
+interface SButtonProps {
   title: string;
-  isLoading?: boolean;
+  onPress: () => void;
   icon: keyof typeof Ionicons.glyphMap;
+  variant?: 'default' | 'google' | 'apple';
 }
 
 export function SButton({
   title,
-  isLoading = false,
+  onPress,
   icon,
-  ...rest
-}: ButtonProps) {
+  variant = 'default',
+}: SButtonProps) {
+  const theme = useTheme();
+  const styles = createStyles(theme);
+
+  const containerStyle = [
+    styles.container,
+    variant === 'google' && styles.googleContainer,
+    variant === 'apple' && styles.appleContainer,
+  ];
+
+  const iconStyle = [
+    styles.icon,
+    variant === 'google' && styles.googleIcon,
+    variant === 'apple' && styles.appleIcon,
+  ];
+
+  const textStyle = [
+    styles.text,
+    variant === 'google' && styles.googleText,
+    variant === 'apple' && styles.appleText,
+  ];
+
   return (
-    <TouchableOpacity
-      style={styles.container}
-      disabled={isLoading}
-      activeOpacity={0.8}
-      {...rest}
-    >
-      {isLoading ? (
-        <ActivityIndicator color="white" />
-      ) : (
-        <>
-          <Ionicons name={icon} style={styles.icon} />
-          <Text style={styles.text}>{title}</Text>
-        </>
-      )}
+    <TouchableOpacity style={containerStyle} onPress={onPress}>
+      <Ionicons name={icon} style={iconStyle} />
+      <Text style={textStyle}>{title}</Text>
     </TouchableOpacity>
   );
 }
