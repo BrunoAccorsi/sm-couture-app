@@ -85,7 +85,7 @@ export default function Page() {
           imageStyle={styles.heroImageStyle}
         >
           <Image
-            source={require('@/assets/images/Sm-couture-logo-white.png')}
+            source={require('@/assets/images/sm-couture-logo-white.png')}
             style={styles.logo}
             resizeMode="contain"
           />
