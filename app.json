@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "sm-couture-app",
-    "slug": "sm-couture-app",
+    "slug": "sandm-couture",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -16,7 +16,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.smcoutureapp"
     },
     "web": {
       "bundler": "metro",
@@ -28,10 +29,10 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/splash-icon-dark.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#293C8F"
         }
       ],
       "expo-secure-store"
@@ -43,7 +44,14 @@
       "CALENDLY_API_USER": "https://api.calendly.com/users/05520f39-eca0-4cca-aad6-da2d19775f7f",
       "CALENDLY_API_URL": "https://api.calendly.com",
       "CALENDLY_API_KEY": "eyJraWQiOiIxY2UxZTEzNjE3ZGNmNzY2YjNjZWJjY2Y4ZGM1YmFmYThhNjVlNjg0MDIzZjdjMzJiZTgzNDliMjM4MDEzNWI0IiwidHlwIjoiUEFUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNzM4NDMwOTg4LCJqdGkiOiIwMWI0OGQ5MC1mN2YzLTQ0ZTItYTM2Yy0xY2ExN2FjY2ZjMDUiLCJ1c2VyX3V1aWQiOiIwNTUyMGYzOS1lY2EwLTRjY2EtYWFkNi1kYTJkMTk3NzVmN2YifQ.P9vPhRifEqegrxw6-PZzYxp0-hUwuPQNOCuSAt_gZ3fXmnf_DPczE_Vn7focI4aX-wZnOFo_GgxksSdwjfw27g",
-      "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_cHJlY2lzZS1tYW5hdGVlLTkyLmNsZXJrLmFjY291bnRzLmRldiQ"
-    }
+      "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_cHJlY2lzZS1tYW5hdGVlLTkyLmNsZXJrLmFjY291bnRzLmRldiQ",
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "a7470c2d-de6a-44ec-a162-3506afcda64b"
+      }
+    },
+    "owner": "bruno.bergoli"
   }
 }
