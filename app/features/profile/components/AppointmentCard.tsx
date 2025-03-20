@@ -121,7 +121,7 @@ const AppointmentActions: React.FC<AppointmentActionsProps> = ({
   return (
     <View style={styles.appointmentActions}>
       <Button
-        mode="outlined"
+        mode="contained-tonal"
         icon="calendar-clock"
         contentStyle={styles.buttonContent}
         style={styles.rescheduleButton}
@@ -133,7 +133,7 @@ const AppointmentActions: React.FC<AppointmentActionsProps> = ({
         Reschedule
       </Button>
       <Button
-        mode="contained-tonal"
+        mode="text"
         icon="calendar-remove"
         contentStyle={styles.buttonContent}
         style={styles.cancelButton}
@@ -196,7 +196,6 @@ const createStyles = (theme: MD3Theme) =>
     },
     appointmentActions: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
       marginTop: 8,
     },
     buttonContent: {
@@ -204,12 +203,9 @@ const createStyles = (theme: MD3Theme) =>
     },
     rescheduleButton: {
       flex: 1,
-      marginRight: 8,
       borderColor: theme.colors.primary,
     },
     cancelButton: {
-      flex: 1,
-      marginLeft: 8,
       borderColor: theme.colors.error,
     },
   });

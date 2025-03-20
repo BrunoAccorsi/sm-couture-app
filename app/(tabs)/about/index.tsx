@@ -10,7 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { MD3Theme, useTheme } from 'react-native-paper';
-import { aboutContent } from './content';
+import { aboutContent } from '../../content/aboutContent';
 
 const carouselImages = [
   require('@/assets/images/about/carousel/sm-couture-item-model-1.jpeg'),
