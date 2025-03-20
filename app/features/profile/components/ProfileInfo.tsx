@@ -1,15 +1,8 @@
 import { usePreferences } from '@/app/context/preferencesContext';
 import { FontAwesome6 } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import {
-  Divider,
-  MD3Theme,
-  Switch,
-  Text,
-  useTheme,
-  Button,
-} from 'react-native-paper';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import { Divider, MD3Theme, Switch, Text, useTheme } from 'react-native-paper';
 import * as Linking from 'expo-linking';
 import { useClerk } from '@clerk/clerk-expo';
 
@@ -33,52 +26,50 @@ export const ProfileInfo: React.FC<ProfileInfoProps> = ({ createdAt }) => {
   };
 
   return (
-    <>
-      <View style={styles.infoCard}>
-        <View style={styles.infoRow}>
-          <FontAwesome6
-            name="calendar"
-            size={16}
-            color={theme.colors.primary}
-          />
-          <Text variant="titleMedium" style={styles.infoLabel}>
-            Member since
-          </Text>
-          <Text variant="bodyLarge" style={styles.infoValue}>
-            {createdAt
-              ? new Date(createdAt).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })
-              : 'N/A'}
-          </Text>
-        </View>
-        <Divider style={styles.divider} />
-        <View style={styles.infoRow}>
-          <FontAwesome6
-            name={isThemeDark ? 'moon' : 'sun'}
-            size={16}
-            color={theme.colors.primary}
-          />
-          <Text variant="titleMedium" style={styles.infoLabel}>
-            Dark Mode
-          </Text>
-          <Switch value={isThemeDark} onValueChange={toggleTheme} />
-        </View>
+    <View style={styles.infoCard}>
+      <View style={styles.infoRow}>
+        <FontAwesome6 name="calendar" size={16} color={theme.colors.primary} />
+        <Text variant="titleMedium" style={styles.infoLabel}>
+          Member since
+        </Text>
+        <Text variant="bodyLarge" style={styles.infoValue}>
+          {createdAt
+            ? new Date(createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })
+            : 'N/A'}
+        </Text>
       </View>
 
-      <Button
-        mode="contained"
-        icon="logout"
-        onPress={handleSignOut}
-        style={styles.signOutButton}
-        contentStyle={styles.signOutButtonContent}
-        labelStyle={{ color: theme.colors.onSurface }}
-      >
-        Sign Out
-      </Button>
-    </>
+      <Divider style={styles.divider} />
+
+      <TouchableOpacity onPress={handleSignOut} style={styles.infoRow}>
+        <FontAwesome6
+          name="arrow-right-from-bracket"
+          size={16}
+          color={theme.colors.primary}
+        />
+        <Text variant="titleMedium" style={styles.infoLabel}>
+          Sign Out
+        </Text>
+      </TouchableOpacity>
+
+      <Divider style={styles.divider} />
+
+      <View style={styles.infoRow}>
+        <FontAwesome6
+          name={isThemeDark ? 'moon' : 'sun'}
+          size={16}
+          color={theme.colors.primary}
+        />
+        <Text variant="titleMedium" style={styles.infoLabel}>
+          Dark Mode
+        </Text>
+        <Switch value={isThemeDark} onValueChange={toggleTheme} />
+      </View>
+    </View>
   );
 };
 

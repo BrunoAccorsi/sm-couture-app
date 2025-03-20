@@ -58,6 +58,7 @@ const createStyles = (theme: MD3Theme) =>
       height: 340,
       width: '100%',
       overflow: 'hidden',
+      marginBottom: 16,
     },
     heroImage: {
       flex: 1,
