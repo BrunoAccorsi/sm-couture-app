@@ -111,18 +111,27 @@ export default function HomeScreen() {
   const renderAboutSection = () => (
     <Surface style={styles.aboutSection}>
       <Text variant="headlineSmall" style={styles.aboutTitle}>
-        About SM Couture
+        Our Policies
       </Text>
       <Divider style={styles.aboutDivider} />
+
+      <Text style={styles.policyTitle}>Return Policy</Text>
       <Text style={styles.aboutText}>
-        Specializing in bespoke fashion designs and tailoring services, SM
-        Couture creates unique pieces tailored perfectly to your measurements
-        and style preferences.
+        All sales are final. We do not offer refunds or exchanges.
       </Text>
-      <View style={styles.featureRow}>
-        <FeatureItem icon="star" text="Expert Tailoring" />
+
+      <Text style={styles.policyTitle}>Rental Clothing Policy</Text>
+      <Text style={styles.aboutText}>
+        A security deposit is required for all clothing rentals and will be held
+        on your credit card at the time of rental. Any damage, staining, or
+        excessive wear to rented items will result in the forfeiture of the full
+        deposit.
+      </Text>
+
+      <View style={styles.policyIconRow}>
+        <FeatureItem icon="receipt" text="No Refunds" />
+        <FeatureItem icon="credit-card" text="Deposit Required" />
         <FeatureItem icon="hand-scissors" text="Custom Designs" />
-        <FeatureItem icon="gem" text="Premium Quality" />
       </View>
     </Surface>
   );
@@ -334,5 +343,17 @@ const createStyles = (theme: MD3Theme) =>
       fontWeight: '500',
       color: theme.colors.onSurfaceVariant,
       textAlign: 'center',
+    },
+    policyTitle: {
+      fontWeight: 'bold',
+      fontSize: 16,
+      marginTop: 12,
+      marginBottom: 4,
+      color: theme.colors.onSurfaceVariant,
+    },
+    policyIconRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginTop: 16,
     },
   });
